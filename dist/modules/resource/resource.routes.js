@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const resource_controller_1 = require("./resource.controller");
+const upload_1 = require("../../middlewares/upload");
+const resource_upload_controller_1 = require("./resource.upload.controller");
+const router = (0, express_1.Router)();
+router.post("/", resource_controller_1.createResourceController);
+router.get("/", resource_controller_1.getAllResourcesController);
+router.get("/:id", resource_controller_1.getResourceByIdController);
+router.patch("/:id", resource_controller_1.updateResourceController);
+router.delete("/:id", resource_controller_1.deleteResourceController);
+router.post("/upload", upload_1.upload.single("file"), resource_upload_controller_1.uploadResource);
+exports.default = router;

@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = require("../../middlewares/auth");
+const live_class_controller_1 = require("./live-class.controller");
+const router = (0, express_1.Router)();
+router.post("/", (0, auth_1.auth)("TEACHER"), live_class_controller_1.createLiveClassController);
+router.get("/", (0, auth_1.auth)("TEACHER"), live_class_controller_1.getLiveClassesController);
+router.get("/upcoming", (0, auth_1.auth)("STUDENT"), live_class_controller_1.getUpcomingClassesController);
+router.get("/student", (0, auth_1.auth)("STUDENT"), live_class_controller_1.getStudentLiveClassesController);
+router.get("/stats", (0, auth_1.auth)("TEACHER"), live_class_controller_1.getLiveClassStatsController);
+router.get("/join/:id", (0, auth_1.auth)("STUDENT"), live_class_controller_1.joinLiveClassController);
+router.get("/:id/attendance", (0, auth_1.auth)("TEACHER"), live_class_controller_1.getLiveClassAttendanceController);
+router.get("/:id", (0, auth_1.auth)("TEACHER"), live_class_controller_1.getLiveClassByIdController);
+router.patch("/:id", (0, auth_1.auth)("TEACHER"), live_class_controller_1.updateLiveClassController);
+router.delete("/:id", (0, auth_1.auth)("TEACHER"), live_class_controller_1.deleteLiveClassController);
+exports.default = router;

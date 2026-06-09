@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const profile_controller_1 = require("./profile.controller");
+const auth_1 = require("../../middlewares/auth");
+const router = (0, express_1.Router)();
+router.get("/me", (0, auth_1.auth)(), profile_controller_1.getMyProfileController);
+router.put("/me", (0, auth_1.auth)(), profile_controller_1.updateMyProfileController);
+router.get("/id-card", (0, auth_1.auth)(), profile_controller_1.getStudentIdCardController);
+router.get("/id-card/pdf", (0, auth_1.auth)(), profile_controller_1.downloadStudentIdCardController);
+router.get("/verify/:studentId", profile_controller_1.verifyStudentCardController);
+exports.default = router;

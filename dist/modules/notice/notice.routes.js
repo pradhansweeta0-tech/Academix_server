@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = require("../../middlewares/auth");
+const notice_controller_1 = require("./notice.controller");
+const router = (0, express_1.Router)();
+router.post("/", (0, auth_1.auth)("ADMIN", "TEACHER"), notice_controller_1.createNoticeController);
+router.get("/", notice_controller_1.getAllNoticesController);
+router.get("/:id", notice_controller_1.getNoticeByIdController);
+router.patch("/:id", (0, auth_1.auth)("ADMIN", "TEACHER"), notice_controller_1.updateNoticeController);
+router.delete("/:id", (0, auth_1.auth)("ADMIN"), notice_controller_1.deleteNoticeController);
+exports.default = router;
