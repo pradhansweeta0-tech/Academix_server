@@ -1,5 +1,5 @@
 import express from "express";
-
+import cors from "cors";
 import academicSessionRoutes from "./modules/academic-session/academic-session.routes";
 import boardRoutes from "./modules/board/board.routes";
 import classRoutes from "./modules/class/class.routes";
@@ -28,6 +28,17 @@ import otpRoutes from "./modules/otp/otp.routes";
 import profileRoutes from "./modules/profile/profile.routes";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://nbca.co.in",
+      "https://www.nbca.co.in",
+    ],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
