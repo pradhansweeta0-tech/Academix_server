@@ -68,15 +68,31 @@ export const getAllStudents = async () => {
     select: {
       id: true,
       studentId: true,
+
       name: true,
       email: true,
       phone: true,
-      createdAt: true,
-      updatedAt: true,
+
+      gender: true,
+      dateOfBirth: true,
+
+      guardianName: true,
+      guardianPhone: true,
+
+      address: true,
+
+      isActive: true,
+
+      boardId: true,
+      classId: true,
+      academicSessionId: true,
 
       board: true,
       class: true,
       academicSession: true,
+
+      createdAt: true,
+      updatedAt: true,
     },
   });
 };
