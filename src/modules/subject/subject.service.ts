@@ -22,3 +22,41 @@ export const getAllSubjects = async () => {
     },
   });
 };
+
+export const getSubjectById = async (
+  id: string
+) => {
+  return prisma.subject.findUnique({
+    where: { id },
+    include: {
+      board: true,
+      class: true,
+    },
+  });
+};
+
+export const updateSubject = async (
+  id: string,
+  payload: {
+    name?: string;
+    boardId?: string;
+    classId?: string;
+  }
+) => {
+  return prisma.subject.update({
+    where: { id },
+    data: payload,
+    include: {
+      board: true,
+      class: true,
+    },
+  });
+};
+
+export const deleteSubject = async (
+  id: string
+) => {
+  return prisma.subject.delete({
+    where: { id },
+  });
+};
