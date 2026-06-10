@@ -17,3 +17,33 @@ export const getAllBoards = async () => {
     },
   });
 };
+
+export const getBoardById = async (
+  id: string
+) => {
+  return prisma.board.findUnique({
+    where: { id },
+  });
+};
+
+export const updateBoard = async (
+  id: string,
+  payload: {
+    name?: string;
+    shortName?: string;
+    description?: string;
+  }
+) => {
+  return prisma.board.update({
+    where: { id },
+    data: payload,
+  });
+};
+
+export const deleteBoard = async (
+  id: string
+) => {
+  return prisma.board.delete({
+    where: { id },
+  });
+};
