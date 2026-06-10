@@ -33,12 +33,14 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      "http://localhost:3000",
       "https://nbca.co.in",
       "https://www.nbca.co.in",
+      "*",
     ],
+
     credentials: true,
-  }),
+  })
 );
 
 app.use(express.json());
