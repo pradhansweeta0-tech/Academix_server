@@ -8,50 +8,40 @@ export const createStudent = async (payload: any) => {
     },
   });
 
-  const session =
-    await prisma.academicSession.findUnique({
-      where: {
-        id: payload.academicSessionId,
-      },
-    });
+  const session = await prisma.academicSession.findUnique({
+    where: {
+      id: payload.academicSessionId,
+    },
+  });
 
   if (!board || !session) {
-    throw new Error(
-      "Board or Academic Session not found"
-    );
+    throw new Error("Board or Academic Session not found");
   }
 
   const year = session.name.slice(2, 4);
 
   const boardCode = board.shortName;
 
-  const latestStudent =
-    await prisma.student.findFirst({
-      where: {
-        boardId: payload.boardId,
-        academicSessionId:
-          payload.academicSessionId,
-      },
+  const latestStudent = await prisma.student.findFirst({
+    where: {
+      boardId: payload.boardId,
+      academicSessionId: payload.academicSessionId,
+    },
 
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
   let nextNumber = 1;
 
   if (latestStudent) {
-    const lastNumber = parseInt(
-      latestStudent.studentId.slice(-4)
-    );
+    const lastNumber = parseInt(latestStudent.studentId.slice(-4));
 
     nextNumber = lastNumber + 1;
   }
 
-  const studentId =
-    `${year}${boardCode}${String(
-      nextNumber
-    ).padStart(4, "0")}`;
+  const studentId = `${year}${boardCode}${String(nextNumber).padStart(4, "0")}`;
 
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
@@ -61,78 +51,68 @@ export const createStudent = async (payload: any) => {
       studentId,
       password: hashedPassword,
     },
-  include: {
-    board: true,
-    class: true,
-    academicSession: true,
-  },
-});
+    include: {
+      board: true,
+      class: true,
+      academicSession: true,
+    },
+  });
 
   const { password, ...studentData } = student;
 
   return studentData;
-}
+};
 
 export const getAllStudents = async () => {
   return prisma.student.findMany({
-    include: {
-     id: true,
-    studentId: true,
-    name: true,
-    email: true,
-    phone: true,
-    board: true,
-    class: true,
-    academicSession: true,
-    createdAt: true,
-    updatedAt: true,
+    select: {
+      id: true,
+      studentId: true,
+      name: true,
+      email: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+
+      board: true,
+      class: true,
+      academicSession: true,
     },
   });
 };
 
-export const getStudentById = async (
-  id: string
-) => {
+export const getStudentById = async (id: string) => {
   return prisma.student.findUnique({
     where: { id },
 
-    include: {
+    select: {
       id: true,
-    studentId: true,
-    name: true,
-    email: true,
-    phone: true,
-    board: true,
-    class: true,
-    academicSession: true,
-    createdAt: true,
-    updatedAt: true,
+      studentId: true,
+      name: true,
+      email: true,
+      phone: true,
+      createdAt: true,
+      updatedAt: true,
+
+      board: true,
+      class: true,
+      academicSession: true,
     },
   });
 };
 
-export const updateStudent = async (
-  id: string,
-  payload: any
-) => {
-
-    if (payload.password) {
-    payload.password =
-      await bcrypt.hash(
-        payload.password,
-        10
-      );
+export const updateStudent = async (id: string, payload: any) => {
+  if (payload.password) {
+    payload.password = await bcrypt.hash(payload.password, 10);
   }
-  
+
   return prisma.student.update({
     where: { id },
     data: payload,
   });
 };
 
-export const deleteStudent = async (
-  id: string
-) => {
+export const deleteStudent = async (id: string) => {
   return prisma.student.delete({
     where: { id },
   });
