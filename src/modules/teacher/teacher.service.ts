@@ -12,15 +12,48 @@ export const createTeacher = async (payload: {
   experience?: number;
   bio?: string;
   photo?: string;
+  classIds?: string[];
+  subjectIds?: string[];
 }) => {
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
   const teacher = await prisma.teacher.create({
-    data: {
-      ...payload,
-      password: hashedPassword,
+  data: {
+    name: payload.name,
+    email: payload.email,
+    phone: payload.phone,
+
+    qualification:
+      payload.qualification,
+
+    experience:
+      payload.experience,
+
+    bio: payload.bio,
+
+    photo: payload.photo,
+
+    password: hashedPassword,
+
+    classes: {
+      connect:
+        payload.classIds?.map(
+          (id) => ({
+            id,
+          })
+        ) || [],
     },
-  });
+
+    subjects: {
+      connect:
+        payload.subjectIds?.map(
+          (id) => ({
+            id,
+          })
+        ) || [],
+    },
+  },
+});
 
   try {
     await sendEmail(
