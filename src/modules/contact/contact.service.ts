@@ -21,7 +21,7 @@ export const sendContactMessage = async (payload: {
       <p><strong>Message:</strong></p>
 
       <p>${payload.message}</p>
-    `
+    `,
   );
 
   return {

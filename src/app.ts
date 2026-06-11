@@ -27,6 +27,7 @@ import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import otpRoutes from "./modules/otp/otp.routes";
 import profileRoutes from "./modules/profile/profile.routes";
 import contactRoutes from "./modules/contact/contact.routes";
+import emailRoutes from "./services/email/email.routes";
 
 const app = express();
 
@@ -40,7 +41,7 @@ app.use(
     ],
 
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
@@ -75,6 +76,7 @@ app.use("/api/notices", noticeRoutes);
 app.use("/api/live-classes", liveClassRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/email", emailRoutes);
 
 app.use(globalErrorHandler);
 
