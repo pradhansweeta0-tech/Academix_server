@@ -119,14 +119,61 @@ export const getTeacherById = async (id: string) => {
   });
 };
 
-export const updateTeacher = async (id: string, payload: any) => {
+export const updateTeacher = async (
+  id: string,
+  payload: any
+) => {
+
   if (payload.password) {
-    payload.password = await bcrypt.hash(payload.password, 10);
+    payload.password =
+      await bcrypt.hash(
+        payload.password,
+        10
+      );
   }
 
   return prisma.teacher.update({
     where: { id },
-    data: payload,
+
+    data: {
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
+
+      qualification:
+        payload.qualification,
+
+      experience:
+        payload.experience,
+
+      bio: payload.bio,
+
+      isActive:
+        payload.isActive,
+
+      ...(payload.password && {
+        password:
+          payload.password,
+      }),
+
+      classes: {
+        set:
+          payload.classIds?.map(
+            (id: string) => ({
+              id,
+            })
+          ) || [],
+      },
+
+      subjects: {
+        set:
+          payload.subjectIds?.map(
+            (id: string) => ({
+              id,
+            })
+          ) || [],
+      },
+    },
   });
 };
 
