@@ -18,42 +18,36 @@ export const createTeacher = async (payload: {
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
   const teacher = await prisma.teacher.create({
-  data: {
-    name: payload.name,
-    email: payload.email,
-    phone: payload.phone,
+    data: {
+      name: payload.name,
+      email: payload.email,
+      phone: payload.phone,
 
-    qualification:
-      payload.qualification,
+      qualification: payload.qualification,
 
-    experience:
-      payload.experience,
+      experience: payload.experience,
 
-    bio: payload.bio,
+      bio: payload.bio,
 
-    photo: payload.photo,
+      photo: payload.photo,
 
-    password: hashedPassword,
+      password: hashedPassword,
 
-    classes: {
-      connect:
-        payload.classIds?.map(
-          (id) => ({
+      classes: {
+        connect:
+          payload.classIds?.map((id) => ({
             id,
-          })
-        ) || [],
-    },
+          })) || [],
+      },
 
-    subjects: {
-      connect:
-        payload.subjectIds?.map(
-          (id) => ({
+      subjects: {
+        connect:
+          payload.subjectIds?.map((id) => ({
             id,
-          })
-        ) || [],
+          })) || [],
+      },
     },
-  },
-});
+  });
 
   try {
     await sendEmail(
@@ -78,17 +72,24 @@ export const getAllTeachers = async () => {
     orderBy: {
       createdAt: "desc",
     },
+
     select: {
       id: true,
       name: true,
       email: true,
       phone: true,
       photo: true,
+
       qualification: true,
       experience: true,
       bio: true,
+
       role: true,
       isActive: true,
+
+      classes: true,
+      subjects: true,
+
       createdAt: true,
       updatedAt: true,
     },
@@ -119,17 +120,9 @@ export const getTeacherById = async (id: string) => {
   });
 };
 
-export const updateTeacher = async (
-  id: string,
-  payload: any
-) => {
-
+export const updateTeacher = async (id: string, payload: any) => {
   if (payload.password) {
-    payload.password =
-      await bcrypt.hash(
-        payload.password,
-        10
-      );
+    payload.password = await bcrypt.hash(payload.password, 10);
   }
 
   return prisma.teacher.update({
@@ -140,38 +133,30 @@ export const updateTeacher = async (
       email: payload.email,
       phone: payload.phone,
 
-      qualification:
-        payload.qualification,
+      qualification: payload.qualification,
 
-      experience:
-        payload.experience,
+      experience: payload.experience,
 
       bio: payload.bio,
 
-      isActive:
-        payload.isActive,
+      isActive: payload.isActive,
 
       ...(payload.password && {
-        password:
-          payload.password,
+        password: payload.password,
       }),
 
       classes: {
         set:
-          payload.classIds?.map(
-            (id: string) => ({
-              id,
-            })
-          ) || [],
+          payload.classIds?.map((id: string) => ({
+            id,
+          })) || [],
       },
 
       subjects: {
         set:
-          payload.subjectIds?.map(
-            (id: string) => ({
-              id,
-            })
-          ) || [],
+          payload.subjectIds?.map((id: string) => ({
+            id,
+          })) || [],
       },
     },
   });
