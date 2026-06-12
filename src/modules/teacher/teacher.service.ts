@@ -58,10 +58,13 @@ export const createTeacher = async (payload: {
         email: teacher.email,
       }),
     );
-  } catch (error) {
-    console.error("Teacher welcome email failed:", error);
-  }
+  } catch (error: any) {
+    console.log("EMAIL FAILED");
 
+    console.error(error);
+
+    console.log(error?.message);
+  }
   const { password, ...teacherData } = teacher;
 
   return teacherData;
