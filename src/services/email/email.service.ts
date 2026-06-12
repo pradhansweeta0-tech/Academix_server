@@ -1,29 +1,56 @@
-import nodemailer from "nodemailer";
-
-export const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 465,
-  secure: false,
-
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-
-  auth: {
-    user: process.env.BREVO_USER,
-    pass: process.env.BREVO_PASS,
-  },
-});
-
 export const sendEmail = async (
   to: string,
   subject: string,
   html: string
 ) => {
-  return transporter.sendMail({
-    from: '"NBCA" <info@nbca.co.in>',
-    to,
-    subject,
-    html,
-  });
+  const response = await fetch(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      method: "POST",
+
+      headers: {
+        accept: "application/json",
+
+        "content-type": "application/json",
+
+        "api-key":
+          process.env.BREVO_API_KEY!,
+      },
+
+      body: JSON.stringify({
+        sender: {
+          name: "NBCA",
+
+          email:
+            "info@nbca.co.in",
+        },
+
+        to: [
+          {
+            email: to,
+          },
+        ],
+
+        subject,
+
+        htmlContent: html,
+      }),
+    }
+  );
+
+  const data =
+    await response.json();
+
+  console.log(
+    "BREVO RESPONSE:",
+    data
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      JSON.stringify(data)
+    );
+  }
+
+  return data;
 };
