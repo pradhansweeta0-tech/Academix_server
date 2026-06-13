@@ -192,7 +192,12 @@ export const getMyProfile = async (
       experience: true,
       bio: true,
 
-      classes: true,
+      classes: {
+        include: {
+          board: true,
+        },
+      },
+
       subjects: true,
 
       createdAt: true,
