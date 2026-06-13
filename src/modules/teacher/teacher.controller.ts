@@ -65,20 +65,13 @@ export const deleteTeacherController = catchAsync(
   },
 );
 
-export const getMyProfileController =
-  catchAsync(
-    async (
-      req: Request,
-      res: Response
-    ) => {
-      const result =
-        await getMyProfile(
-          req.user.id
-        );
+export const getMyProfileController = catchAsync(
+  async (req: Request & { user: { id: string } }, res: Response) => {
+    const result = await getMyProfile(req.user.id);
 
-      res.json({
-        success: true,
-        data: result,
-      });
-    }
-  );
+    res.json({
+      success: true,
+      data: result,
+    });
+  },
+);
