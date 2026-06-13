@@ -6,6 +6,7 @@ import {
   getTeacherByIdController,
   updateTeacherController,
   deleteTeacherController,
+  getMyProfileController,
 } from "./teacher.controller";
 
 import { validateRequest } from "../../middlewares/validateRequest";
@@ -25,6 +26,7 @@ router.post(
 );
 
 router.get("/", auth("ADMIN"), getAllTeachersController);
+router.get("/me", auth("TEACHER"), getMyProfileController);
 router.post("/:teacherId/classes", assignClassesToTeacherController);
 router.post("/:teacherId/subjects", assignSubjectsToTeacherController);
 

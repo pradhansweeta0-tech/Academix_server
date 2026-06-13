@@ -7,6 +7,7 @@ import {
   getTeacherById,
   updateTeacher,
   deleteTeacher,
+  getMyProfile,
 } from "./teacher.service";
 
 export const createTeacherController = catchAsync(
@@ -63,3 +64,21 @@ export const deleteTeacherController = catchAsync(
     });
   },
 );
+
+export const getMyProfileController =
+  catchAsync(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      const result =
+        await getMyProfile(
+          req.user.id
+        );
+
+      res.json({
+        success: true,
+        data: result,
+      });
+    }
+  );
