@@ -38,6 +38,12 @@ export const getTeacherDashboard = async (teacherId: string) => {
     },
   });
 
+  const students = await prisma.student.count({
+    where: {
+      teacherId,
+    },
+  });
+
   return {
     subjects: teacher?.subjects.length || 0,
 
@@ -46,6 +52,8 @@ export const getTeacherDashboard = async (teacherId: string) => {
     assignments,
 
     tests,
+
+    students,
 
     liveClasses,
 
