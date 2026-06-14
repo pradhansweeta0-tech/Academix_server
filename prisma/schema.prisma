@@ -57,6 +57,7 @@ model Class {
   teachers    Teacher[]
   students    Student[]
   liveClasses LiveClass[]
+  assignments Assignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,6 +79,7 @@ model Subject {
   teachers Teacher[]
 
   liveClasses LiveClass[]
+  assignments Assignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -297,8 +299,14 @@ model Assignment {
   maxMarks Int
 
   teacherId String
+  classId String
+  subjectId String
 
   teacher Teacher @relation(fields: [teacherId], references: [id])
+
+  class Class @relation(fields: [classId], references: [id])
+
+  subject Subject @relation(fields: [subjectId], references: [id])
 
   submissions AssignmentSubmission[]
 

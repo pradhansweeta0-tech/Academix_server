@@ -1,27 +1,53 @@
 import { prisma } from "../../config/prisma";
 
-export const createAssignment = async (
-  teacherId: string,
-  payload: any
-) => {
+export const createAssignment = async (teacherId: string, payload: any) => {
   return prisma.assignment.create({
     data: {
-      ...payload,
+      title: payload.title,
+
+      description: payload.description,
+
+      fileUrl: payload.fileUrl,
+
+      dueDate: new Date(payload.dueDate),
+
+      maxMarks: payload.maxMarks,
+
+      classId: payload.classId,
+
+      subjectId: payload.subjectId,
+
       teacherId,
     },
 
     include: {
-      teacher: true,
+      class: {
+        include: {
+          board: true,
+        },
+      },
+
+      subject: true,
     },
   });
 };
 
-export const getAssignments = async (
-  teacherId: string
-) => {
+export const getAssignments = async (teacherId: string) => {
   return prisma.assignment.findMany({
     where: {
       teacherId,
+    },
+
+    include: {
+      class: {
+        include: {
+          board: true,
+        },
+      },
+
+      subject: true,
+
+      submissions: true,
     },
 
     orderBy: {
@@ -30,10 +56,7 @@ export const getAssignments = async (
   });
 };
 
-export const getAssignmentById = async (
-  teacherId: string,
-  id: string
-) => {
+export const getAssignmentById = async (teacherId: string, id: string) => {
   return prisma.assignment.findFirst({
     where: {
       id,
@@ -45,21 +68,17 @@ export const getAssignmentById = async (
 export const updateAssignment = async (
   teacherId: string,
   id: string,
-  payload: any
+  payload: any,
 ) => {
-
-  const assignment =
-    await prisma.assignment.findFirst({
-      where: {
-        id,
-        teacherId,
-      },
-    });
+  const assignment = await prisma.assignment.findFirst({
+    where: {
+      id,
+      teacherId,
+    },
+  });
 
   if (!assignment) {
-    throw new Error(
-      "Assignment not found"
-    );
+    throw new Error("Assignment not found");
   }
 
   return prisma.assignment.update({
@@ -71,23 +90,16 @@ export const updateAssignment = async (
   });
 };
 
-export const deleteAssignment = async (
-  teacherId: string,
-  id: string
-) => {
-
-  const assignment =
-    await prisma.assignment.findFirst({
-      where: {
-        id,
-        teacherId,
-      },
-    });
+export const deleteAssignment = async (teacherId: string, id: string) => {
+  const assignment = await prisma.assignment.findFirst({
+    where: {
+      id,
+      teacherId,
+    },
+  });
 
   if (!assignment) {
-    throw new Error(
-      "Assignment not found"
-    );
+    throw new Error("Assignment not found");
   }
 
   return prisma.assignment.delete({
