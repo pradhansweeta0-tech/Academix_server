@@ -6,6 +6,7 @@ import {
   getContentByIdController,
   updateContentController,
   deleteContentController,
+  getContentsByChapterController,
 } from "./content.controller";
 
 const router = Router();
@@ -13,6 +14,8 @@ const router = Router();
 router.post("/", createContentController);
 
 router.get("/", getAllContentsController);
+
+router.get("/chapter/:chapterId", getContentsByChapterController);
 
 router.get("/:id", getContentByIdController);
 

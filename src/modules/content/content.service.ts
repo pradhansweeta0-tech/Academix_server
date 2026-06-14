@@ -64,3 +64,15 @@ export const deleteContent = async (id: string) => {
     },
   });
 };
+
+export const getContentsByChapter = async (chapterId: string) => {
+  return prisma.content.findMany({
+    where: {
+      chapterId,
+    },
+
+    orderBy: {
+      orderNo: "asc",
+    },
+  });
+};

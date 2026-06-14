@@ -6,12 +6,10 @@ import {
   getContentById,
   updateContent,
   deleteContent,
+  getContentsByChapter,
 } from "./content.service";
 
-export const createContentController = async (
-  req: Request,
-  res: Response
-) => {
+export const createContentController = async (req: Request, res: Response) => {
   const result = await createContent(req.body);
 
   res.status(201).json({
@@ -20,10 +18,7 @@ export const createContentController = async (
   });
 };
 
-export const getAllContentsController = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllContentsController = async (req: Request, res: Response) => {
   const result = await getAllContents();
 
   res.json({
@@ -32,13 +27,8 @@ export const getAllContentsController = async (
   });
 };
 
-export const getContentByIdController = async (
-  req: Request,
-  res: Response
-) => {
-  const result = await getContentById(
-    req.params.id as string
-  );
+export const getContentByIdController = async (req: Request, res: Response) => {
+  const result = await getContentById(req.params.id as string);
 
   res.json({
     success: true,
@@ -46,14 +36,8 @@ export const getContentByIdController = async (
   });
 };
 
-export const updateContentController = async (
-  req: Request,
-  res: Response
-) => {
-  const result = await updateContent(
-    req.params.id as string,
-    req.body
-  );
+export const updateContentController = async (req: Request, res: Response) => {
+  const result = await updateContent(req.params.id as string, req.body);
 
   res.json({
     success: true,
@@ -61,13 +45,20 @@ export const updateContentController = async (
   });
 };
 
-export const deleteContentController = async (
+export const deleteContentController = async (req: Request, res: Response) => {
+  const result = await deleteContent(req.params.id as string);
+
+  res.json({
+    success: true,
+    data: result,
+  });
+};
+
+export const getContentsByChapterController = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
-  const result = await deleteContent(
-    req.params.id as string
-  );
+  const result = await getContentsByChapter(req.params.chapterId as string);
 
   res.json({
     success: true,
