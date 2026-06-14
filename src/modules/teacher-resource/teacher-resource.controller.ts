@@ -8,6 +8,7 @@ import {
   getTeacherResourceById,
   updateTeacherResource,
   deleteTeacherResource,
+  getTeacherResourceStats,
 } from "./teacher-resource.service";
 
 export const createTeacherResourceController =
@@ -178,4 +179,23 @@ export const deleteTeacherResourceController =
         message: "Upload failed",
       });
     }
+  };
+
+  export const getTeacherResourceStatsController =
+  async (
+    req: Request,
+    res: Response,
+  ) => {
+
+    const user = (req as any).user;
+
+    const result =
+      await getTeacherResourceStats(
+        user.id,
+      );
+
+    res.json({
+      success: true,
+      data: result,
+    });
   };

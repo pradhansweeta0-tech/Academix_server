@@ -9,6 +9,7 @@ import {
   updateTeacherResourceController,
   deleteTeacherResourceController,
   uploadTeacherResourceController,
+  getTeacherResourceStatsController,
 } from "./teacher-resource.controller";
 
 const router = Router();
@@ -23,6 +24,8 @@ router.post(
 router.post("/", auth("TEACHER"), createTeacherResourceController);
 
 router.get("/", auth("TEACHER"), getTeacherResourcesController);
+
+router.get("/stats", auth("TEACHER"), getTeacherResourceStatsController);
 
 router.get("/:id", auth("TEACHER"), getTeacherResourceByIdController);
 
