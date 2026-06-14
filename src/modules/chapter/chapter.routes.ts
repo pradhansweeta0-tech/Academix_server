@@ -6,6 +6,7 @@ import {
   getChapterByIdController,
   updateChapterController,
   deleteChapterController,
+  getChaptersBySubjectController,
 } from "./chapter.controller";
 
 const router = Router();
@@ -13,6 +14,8 @@ const router = Router();
 router.post("/", createChapterController);
 
 router.get("/", getAllChaptersController);
+
+router.get("/subject/:subjectId", getChaptersBySubjectController);
 
 router.get("/:id", getChapterByIdController);
 

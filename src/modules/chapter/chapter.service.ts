@@ -57,3 +57,17 @@ export const deleteChapter = async (id: string) => {
     },
   });
 };
+
+export const getChaptersBySubject = async (
+  subjectId: string,
+) => {
+  return prisma.chapter.findMany({
+    where: {
+      subjectId,
+    },
+
+    orderBy: {
+      chapterNo: "asc",
+    },
+  });
+};
