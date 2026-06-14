@@ -62,6 +62,22 @@ export const getAssignmentById = async (teacherId: string, id: string) => {
       id,
       teacherId,
     },
+
+    include: {
+      class: {
+        include: {
+          board: true,
+        },
+      },
+
+      subject: true,
+
+      submissions: {
+        include: {
+          student: true,
+        },
+      },
+    },
   });
 };
 
