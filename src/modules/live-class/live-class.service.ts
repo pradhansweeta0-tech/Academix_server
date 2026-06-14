@@ -63,8 +63,14 @@ export const getLiveClasses = async (teacherId: string) => {
     },
 
     include: {
-      class: true,
+      class: {
+        include: {
+          board: true,
+        },
+      },
+
       subject: true,
+
       teacher: true,
     },
 
@@ -82,9 +88,15 @@ export const getLiveClassById = async (teacherId: string, id: string) => {
     },
 
     include: {
-      teacher: true,
-      class: true,
+      class: {
+        include: {
+          board: true,
+        },
+      },
+
       subject: true,
+
+      teacher: true,
     },
   });
 };
