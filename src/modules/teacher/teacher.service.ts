@@ -173,9 +173,7 @@ export const deleteTeacher = async (id: string) => {
   });
 };
 
-export const getMyProfile = async (
-  teacherId: string
-) => {
+export const getMyProfile = async (teacherId: string) => {
   return prisma.teacher.findUnique({
     where: {
       id: teacherId,
@@ -198,7 +196,12 @@ export const getMyProfile = async (
         },
       },
 
-      subjects: true,
+      subjects: {
+        include: {
+          class: true,
+          board: true,
+        },
+      },
 
       createdAt: true,
     },
