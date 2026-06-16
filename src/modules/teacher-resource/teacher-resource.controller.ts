@@ -115,21 +115,14 @@ export const uploadTeacherResourceController = async (
 
     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
-    const result = await createTeacherResource(user.id, {
-      title: req.body.title,
-
-      type: req.body.type,
-
-      contentId: req.body.contentId,
-
-      fileUrl,
-
-      fileSize: req.file.size,
-    });
-
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      data: result,
+
+      data: {
+        fileUrl,
+
+        fileSize: req.file.size,
+      },
     });
   } catch (error) {
     console.error(error);
