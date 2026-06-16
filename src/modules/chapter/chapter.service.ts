@@ -6,8 +6,19 @@ export const createChapter = async (payload: {
   description?: string;
   subjectId: string;
 }) => {
+  const subject = await prisma.subject.findUnique({
+    where: {
+      id: payload.subjectId,
+    },
+  });
+
+  console.log("FOUND SUBJECT:", subject);
+
+  console.log("PAYLOAD:", payload);
+
   return prisma.chapter.create({
     data: payload,
+
     include: {
       subject: true,
     },
@@ -40,7 +51,7 @@ export const updateChapter = async (
     name?: string;
     description?: string;
     isPublished?: boolean;
-  }
+  },
 ) => {
   return prisma.chapter.update({
     where: {
@@ -58,9 +69,7 @@ export const deleteChapter = async (id: string) => {
   });
 };
 
-export const getChaptersBySubject = async (
-  subjectId: string,
-) => {
+export const getChaptersBySubject = async (subjectId: string) => {
   return prisma.chapter.findMany({
     where: {
       subjectId,
