@@ -11,11 +11,6 @@ export const createChapter = async (payload: {
       id: payload.subjectId,
     },
   });
-
-  console.log("FOUND SUBJECT:", subject);
-
-  console.log("PAYLOAD:", payload);
-
   return prisma.chapter.create({
     data: payload,
 
