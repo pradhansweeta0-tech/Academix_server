@@ -5,6 +5,13 @@ export const createTest = async (teacherId: string, payload: any) => {
   return prisma.test.create({
     data: {
       ...payload,
+
+      chapterId: payload.chapterId || null,
+
+      startTime: payload.startTime ? new Date(payload.startTime) : null,
+
+      endTime: payload.endTime ? new Date(payload.endTime) : null,
+      
       teacherId,
     },
 
