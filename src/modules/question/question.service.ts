@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma";
+import { DifficultyLevel } from "@prisma/client";
 
 export const createQuestion = async (payload: {
   question: string;
@@ -19,7 +20,7 @@ export const createQuestion = async (payload: {
 
   explanation?: string;
 
-  difficulty?: string;
+  difficulty?: DifficultyLevel;
 
   marks: number;
 
