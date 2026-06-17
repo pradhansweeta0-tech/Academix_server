@@ -11,7 +11,7 @@ export const createTest = async (teacherId: string, payload: any) => {
       startTime: payload.startTime ? new Date(payload.startTime) : null,
 
       endTime: payload.endTime ? new Date(payload.endTime) : null,
-      
+
       teacherId,
     },
 
@@ -99,7 +99,15 @@ export const updateTest = async (
       id,
     },
 
-    data: payload,
+    data: {
+      ...payload,
+
+      chapterId: payload.chapterId || null,
+
+      startTime: payload.startTime ? new Date(payload.startTime) : null,
+
+      endTime: payload.endTime ? new Date(payload.endTime) : null,
+    },
   });
 };
 
