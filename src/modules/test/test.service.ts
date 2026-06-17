@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma";
 
 export const createTest = async (teacherId: string, payload: any) => {
+  console.log("TEST PAYLOAD:", payload);
   return prisma.test.create({
     data: {
       ...payload,
