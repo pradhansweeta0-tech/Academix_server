@@ -9,6 +9,14 @@ export const createTest = async (teacherId: string, payload: any) => {
 
     include: {
       teacher: true,
+
+      board: true,
+
+      class: true,
+
+      subject: true,
+
+      chapter: true,
     },
   });
 };
@@ -17,6 +25,20 @@ export const getTests = async (teacherId: string) => {
   return prisma.test.findMany({
     where: {
       teacherId,
+    },
+
+    include: {
+      board: true,
+      class: true,
+      subject: true,
+      chapter: true,
+
+      _count: {
+        select: {
+          questions: true,
+          attempts: true,
+        },
+      },
     },
 
     orderBy: {
@@ -33,7 +55,17 @@ export const getTestById = async (teacherId: string, id: string) => {
     },
 
     include: {
+      board: true,
+
+      class: true,
+
+      subject: true,
+
+      chapter: true,
+
       questions: true,
+
+      attempts: true,
     },
   });
 };
@@ -43,6 +75,17 @@ export const updateTest = async (
   id: string,
   payload: any,
 ) => {
+  const test = await prisma.test.findFirst({
+    where: {
+      id,
+      teacherId,
+    },
+  });
+
+  if (!test) {
+    throw new Error("Test not found");
+  }
+
   return prisma.test.update({
     where: {
       id,
@@ -53,6 +96,17 @@ export const updateTest = async (
 };
 
 export const deleteTest = async (teacherId: string, id: string) => {
+  const test = await prisma.test.findFirst({
+    where: {
+      id,
+      teacherId,
+    },
+  });
+
+  if (!test) {
+    throw new Error("Test not found");
+  }
+
   return prisma.test.delete({
     where: {
       id,

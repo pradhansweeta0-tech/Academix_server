@@ -39,6 +39,7 @@ model Board {
   classes  Class[]
   subjects Subject[]
   students Student[]
+  tests    Test[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -58,6 +59,7 @@ model Class {
   students    Student[]
   liveClasses LiveClass[]
   assignments Assignment[]
+  tests       Test[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -80,6 +82,7 @@ model Subject {
 
   liveClasses LiveClass[]
   assignments Assignment[]
+  tests       Test[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,6 +106,7 @@ model Chapter {
   subject Subject @relation(fields: [subjectId], references: [id])
 
   contents Content[]
+  tests    Test[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -299,7 +303,7 @@ model Assignment {
   maxMarks Int
 
   teacherId String
-  classId String
+  classId   String
   subjectId String
 
   teacher Teacher @relation(fields: [teacherId], references: [id])
@@ -368,21 +372,59 @@ model Attendance {
   @@unique([studentId, liveClassId])
 }
 
+enum DifficultyLevel {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model Test {
   id String @id @default(cuid())
 
   title       String
   description String?
 
-  duration   Int
+  duration Int
+
   totalMarks Int
+
+  passingMarks Int @default(0)
+
+  negativeMarks Float @default(0)
+
+  startTime DateTime?
+
+  endTime DateTime?
+
+  isPublished Boolean @default(false)
+
+  shuffleQuestions Boolean @default(false)
+
+  shuffleOptions Boolean @default(false)
+
+  boardId String
 
   teacherId String
 
+  classId String
+
+  subjectId String
+
+  chapterId String?
+
+  chapter Chapter? @relation(fields: [chapterId], references: [id])
+
   teacher Teacher @relation(fields: [teacherId], references: [id])
 
+  class Class @relation(fields: [classId], references: [id])
+
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  board Board @relation(fields: [boardId], references: [id])
+
   questions Question[]
-  attempts  TestAttempt[]
+
+  attempts TestAttempt[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -393,12 +435,23 @@ model Question {
 
   question String
 
+  questionImage String?
+
   optionA String
   optionB String
   optionC String
   optionD String
 
+  optionAImage String?
+  optionBImage String?
+  optionCImage String?
+  optionDImage String?
+
   correctAnswer String
+
+  explanation String?
+
+  difficulty DifficultyLevel?
 
   marks Int @default(1)
 
