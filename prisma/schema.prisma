@@ -36,10 +36,11 @@ model Board {
   shortName   String  @unique
   description String?
 
-  classes  Class[]
-  subjects Subject[]
-  students Student[]
-  tests    Test[]
+  classes       Class[]
+  subjects      Subject[]
+  students      Student[]
+  tests         Test[]
+  questionBanks QuestionBank[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -54,12 +55,13 @@ model Class {
 
   board Board @relation(fields: [boardId], references: [id])
 
-  subjects    Subject[]
-  teachers    Teacher[]
-  students    Student[]
-  liveClasses LiveClass[]
-  assignments Assignment[]
-  tests       Test[]
+  subjects      Subject[]
+  teachers      Teacher[]
+  students      Student[]
+  liveClasses   LiveClass[]
+  assignments   Assignment[]
+  tests         Test[]
+  questionBanks QuestionBank[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -80,9 +82,10 @@ model Subject {
 
   teachers Teacher[]
 
-  liveClasses LiveClass[]
-  assignments Assignment[]
-  tests       Test[]
+  liveClasses   LiveClass[]
+  assignments   Assignment[]
+  tests         Test[]
+  questionBanks QuestionBank[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -105,8 +108,9 @@ model Chapter {
 
   subject Subject @relation(fields: [subjectId], references: [id])
 
-  contents Content[]
-  tests    Test[]
+  contents      Content[]
+  tests         Test[]
+  questionBanks QuestionBank[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -227,14 +231,15 @@ model Teacher {
 
   isActive Boolean @default(true)
 
-  subjects    Subject[]
-  classes     Class[]
-  students    Student[]
-  resources   Resource[]
-  assignments Assignment[]
-  attendances Attendance[]
-  tests       Test[]
-  liveClasses LiveClass[]
+  subjects      Subject[]
+  classes       Class[]
+  students      Student[]
+  resources     Resource[]
+  assignments   Assignment[]
+  attendances   Attendance[]
+  tests         Test[]
+  liveClasses   LiveClass[]
+  questionBanks QuestionBank[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -562,6 +567,47 @@ model OTP {
   verified Boolean @default(false)
 
   expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuestionBank {
+  id String @id @default(cuid())
+
+  question String
+
+  questionImage String?
+
+  optionA String
+  optionB String
+  optionC String
+  optionD String
+
+  correctAnswer String
+
+  explanation String?
+
+  difficulty DifficultyLevel?
+
+  marks Int @default(1)
+
+  boardId   String
+  classId   String
+  subjectId String
+  chapterId String?
+
+  teacherId String
+
+  board Board @relation(fields: [boardId], references: [id])
+
+  class Class @relation(fields: [classId], references: [id])
+
+  subject Subject @relation(fields: [subjectId], references: [id])
+
+  chapter Chapter? @relation(fields: [chapterId], references: [id])
+
+  teacher Teacher @relation(fields: [teacherId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
