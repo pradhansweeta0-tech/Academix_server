@@ -124,15 +124,15 @@ export const uploadQuestionsExcelController = async (
 
     const data = XLSX.utils.sheet_to_json(worksheet);
 
-    const questions = (data as any[]).map((row) => ({
-      question: row.question,
+    const questions = data.map((row: any) => ({
+      question: String(row.question),
 
-      optionA: row.optionA,
-      optionB: row.optionB,
-      optionC: row.optionC,
-      optionD: row.optionD,
+      optionA: String(row.optionA),
+      optionB: String(row.optionB),
+      optionC: String(row.optionC),
+      optionD: String(row.optionD),
 
-      correctAnswer: row.correctAnswer,
+      correctAnswer: String(row.correctAnswer),
 
       marks: Number(row.marks) || 1,
 
@@ -143,8 +143,12 @@ export const uploadQuestionsExcelController = async (
       testId: req.body.testId,
     }));
 
+    console.log("FILE:", req.file);
+
     console.log("BODY:", req.body);
-    
+
+    console.log("QUESTIONS:", questions);
+
     await prisma.question.createMany({
       data: questions,
     });
