@@ -93,6 +93,10 @@ export const getAllStudents = async () => {
 
       createdAt: true,
       updatedAt: true,
+      admissionDate: true,
+      submissions: true,
+      attendances: true,
+      testAttempts: true,
     },
   });
 };
@@ -129,6 +133,9 @@ export const getStudentById = async (id: string) => {
 
       createdAt: true,
       updatedAt: true,
+      submissions: true,
+      attendances: true,
+      testAttempts: true,
     },
   });
 };
