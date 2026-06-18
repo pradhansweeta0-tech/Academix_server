@@ -9,6 +9,7 @@ import {
   updateQuestionController,
   deleteQuestionController,
   uploadQuestionImageController,
+  uploadQuestionsExcelController,
 } from "./question.controller";
 
 const router = Router();
@@ -20,6 +21,13 @@ router.post(
   auth("TEACHER"),
   upload.single("file"),
   uploadQuestionImageController,
+);
+
+router.post(
+  "/upload-excel",
+  auth("TEACHER"),
+  upload.single("file"),
+  uploadQuestionsExcelController,
 );
 
 router.get("/test/:testId", auth("TEACHER"), getQuestionsController);
