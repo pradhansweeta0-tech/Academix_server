@@ -143,6 +143,8 @@ export const uploadQuestionsExcelController = async (
       testId: req.body.testId,
     }));
 
+    console.log("BODY:", req.body);
+    
     await prisma.question.createMany({
       data: questions,
     });
