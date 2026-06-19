@@ -135,7 +135,7 @@ export const updateTeacher = async (id: string, payload: any) => {
       name: payload.name,
       email: payload.email,
       phone: payload.phone,
-      photo:payload.photo,
+      photo: payload.photo,
 
       qualification: payload.qualification,
 
@@ -149,19 +149,21 @@ export const updateTeacher = async (id: string, payload: any) => {
         password: payload.password,
       }),
 
-      classes: {
-        set:
-          payload.classIds?.map((id: string) => ({
+      ...(payload.classIds && {
+        classes: {
+          set: payload.classIds.map((id: string) => ({
             id,
-          })) || [],
-      },
+          })),
+        },
+      }),
 
-      subjects: {
-        set:
-          payload.subjectIds?.map((id: string) => ({
+      ...(payload.subjectIds && {
+        subjects: {
+          set: payload.subjectIds.map((id: string) => ({
             id,
-          })) || [],
-      },
+          })),
+        },
+      }),
     },
   });
 };
