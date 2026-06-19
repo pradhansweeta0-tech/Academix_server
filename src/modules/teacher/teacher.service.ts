@@ -135,6 +135,7 @@ export const updateTeacher = async (id: string, payload: any) => {
       name: payload.name,
       email: payload.email,
       phone: payload.phone,
+      photo:payload.photo,
 
       qualification: payload.qualification,
 
@@ -189,6 +190,7 @@ export const getMyProfile = async (teacherId: string) => {
       qualification: true,
       experience: true,
       bio: true,
+      isActive: true,
 
       classes: {
         include: {
