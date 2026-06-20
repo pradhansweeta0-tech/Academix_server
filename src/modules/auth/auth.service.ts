@@ -157,9 +157,9 @@ export const studentSignup = async (payload: any) => {
     },
   });
 
-  const session = await prisma.academicSession.findUnique({
+  const session = await prisma.academicSession.findFirst({
     where: {
-      id: payload.academicSessionId,
+      status: "ACTIVE",
     },
   });
 
@@ -174,7 +174,7 @@ export const studentSignup = async (payload: any) => {
   const latestStudent = await prisma.student.findFirst({
     where: {
       boardId: payload.boardId,
-      academicSessionId: payload.academicSessionId,
+      academicSessionId: session.id,
     },
 
     orderBy: {
@@ -197,7 +197,11 @@ export const studentSignup = async (payload: any) => {
   const student = await prisma.student.create({
     data: {
       ...payload,
+
+      academicSessionId: session.id,
+
       studentId,
+
       password: hashedPassword,
     },
 
@@ -215,26 +219,39 @@ export const studentSignup = async (payload: any) => {
   });
 
   if (student.email) {
-  try {
-    await sendEmail(
-      student.email,
-      "Welcome to NBCA",
-      welcomeStudentTemplate({
-        name: student.name,
-        studentId: student.studentId,
-        email: student.email,
-        board: board.name,
-        className: classData.name,
-      }),
-    );
-  } catch (error) {
-    console.error("Welcome email failed:", error);
+    try {
+      await sendEmail(
+        student.email,
+        "Welcome to NBCA",
+        welcomeStudentTemplate({
+          name: student.name,
+          studentId: student.studentId,
+          email: student.email,
+          board: board.name,
+          className: classData.name,
+        }),
+      );
+    } catch (error) {
+      console.error("Welcome email failed:", error);
+    }
   }
-}
   const { password, ...studentData } = student;
+
+  const token = jwt.sign(
+    {
+      id: student.id,
+      studentId: student.studentId,
+      role: student.role,
+    },
+    process.env.JWT_SECRET as string,
+    {
+      expiresIn: "7d",
+    },
+  );
 
   return {
     message: "Student registered successfully",
+    token,
     student: studentData,
   };
 };
