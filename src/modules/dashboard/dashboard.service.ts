@@ -72,6 +72,10 @@ export const getAdminDashboard = async () => {
 
   const totalNotices = await prisma.notice.count();
 
+  const totalClasses = await prisma.class.count();
+
+  const totalSubject = await prisma.subject.count();
+
   const upcomingLiveClasses = await prisma.liveClass.count({
     where: {
       startTime: {
@@ -87,6 +91,8 @@ export const getAdminDashboard = async () => {
     totalTests,
     totalNotices,
     upcomingLiveClasses,
+    totalClasses,
+    totalSubject,
   };
 };
 
