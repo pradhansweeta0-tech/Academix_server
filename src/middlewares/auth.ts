@@ -44,3 +44,12 @@ export const auth = (...roles: string[]) => {
     }
   };
 };
+
+export interface AuthRequest extends Request {
+  user: {
+    id: string;
+    role: string;
+    email?: string;
+    studentId?: string;
+  };
+}

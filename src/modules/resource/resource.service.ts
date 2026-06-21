@@ -33,9 +33,7 @@ export const getAllResources = async () => {
   });
 };
 
-export const getResourceById = async (
-  id: string
-) => {
+export const getResourceById = async (id: string) => {
   return prisma.resource.findUnique({
     where: {
       id,
@@ -46,10 +44,7 @@ export const getResourceById = async (
   });
 };
 
-export const updateResource = async (
-  id: string,
-  payload: any
-) => {
+export const updateResource = async (id: string, payload: any) => {
   return prisma.resource.update({
     where: {
       id,
@@ -58,12 +53,57 @@ export const updateResource = async (
   });
 };
 
-export const deleteResource = async (
-  id: string
-) => {
+export const deleteResource = async (id: string) => {
   return prisma.resource.delete({
     where: {
       id,
+    },
+  });
+};
+
+export const getStudentResources = async (studentId: string) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: studentId,
+    },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  return prisma.resource.findMany({
+    where: {
+      content: {
+        chapter: {
+          subject: {
+            classId: student.classId,
+
+            boardId: student.boardId,
+          },
+        },
+      },
+    },
+
+    include: {
+      content: {
+        include: {
+          chapter: {
+            include: {
+              subject: {
+                include: {
+                  board: true,
+                  class: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
     },
   });
 };

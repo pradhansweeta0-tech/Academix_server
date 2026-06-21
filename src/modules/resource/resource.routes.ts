@@ -6,17 +6,21 @@ import {
   getResourceByIdController,
   updateResourceController,
   deleteResourceController,
+  getStudentResourcesController,
 } from "./resource.controller";
 
 import { upload } from "../../middlewares/upload";
 
 import { uploadResource } from "./resource.upload.controller";
+import { auth } from "../../middlewares/auth";
 
 const router = Router();
 
 router.post("/", createResourceController);
 
 router.get("/", getAllResourcesController);
+
+router.get("/student", auth("STUDENT"), getStudentResourcesController);
 
 router.get("/:id", getResourceByIdController);
 
