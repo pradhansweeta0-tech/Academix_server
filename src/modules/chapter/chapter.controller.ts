@@ -7,6 +7,7 @@ import {
   updateChapter,
   deleteChapter,
   getChaptersBySubject,
+  getStudentChapters,
 } from "./chapter.service";
 
 export const createChapterController = async (
@@ -85,6 +86,24 @@ export const getChaptersBySubjectController =
     const result =
       await getChaptersBySubject(
         req.params.subjectId as string,
+      );
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  };
+
+  export const getStudentChaptersController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    const result =
+      await getStudentChapters(
+        (req as any).user.id,
+        req.params.subjectId as string
       );
 
     res.json({

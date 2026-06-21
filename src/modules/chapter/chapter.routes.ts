@@ -7,13 +7,20 @@ import {
   updateChapterController,
   deleteChapterController,
   getChaptersBySubjectController,
+  getStudentChaptersController,
 } from "./chapter.controller";
+import { auth } from "../../middlewares/auth";
 
 const router = Router();
 
 router.post("/", createChapterController);
 
 router.get("/", getAllChaptersController);
+router.get(
+  "/student/:subjectId",
+  auth("STUDENT"),
+  getStudentChaptersController,
+);
 
 router.get("/subject/:subjectId", getChaptersBySubjectController);
 

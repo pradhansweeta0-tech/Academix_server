@@ -75,3 +75,41 @@ export const getChaptersBySubject = async (subjectId: string) => {
     },
   });
 };
+
+export const getStudentChapters =
+  async (
+    studentId: string,
+    subjectId: string
+  ) => {
+
+    const student =
+      await prisma.student.findUnique({
+        where: {
+          id: studentId,
+        },
+      });
+
+    if (!student) {
+      throw new Error(
+        "Student not found"
+      );
+    }
+
+    return prisma.chapter.findMany({
+      where: {
+        subjectId,
+
+        subject: {
+          classId:
+            student.classId,
+
+          boardId:
+            student.boardId,
+        },
+      },
+
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  };
