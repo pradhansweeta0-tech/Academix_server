@@ -23,9 +23,7 @@ export const getAllSubjects = async () => {
   });
 };
 
-export const getSubjectById = async (
-  id: string
-) => {
+export const getSubjectById = async (id: string) => {
   return prisma.subject.findUnique({
     where: { id },
     include: {
@@ -41,7 +39,7 @@ export const updateSubject = async (
     name?: string;
     boardId?: string;
     classId?: string;
-  }
+  },
 ) => {
   return prisma.subject.update({
     where: { id },
@@ -53,10 +51,32 @@ export const updateSubject = async (
   });
 };
 
-export const deleteSubject = async (
-  id: string
-) => {
+export const deleteSubject = async (id: string) => {
   return prisma.subject.delete({
     where: { id },
+  });
+};
+
+export const getStudentSubjects = async (studentId: string) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: studentId,
+    },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  return prisma.subject.findMany({
+    where: {
+      classId: student.classId,
+
+      boardId: student.boardId,
+    },
+
+    orderBy: {
+      name: "asc",
+    },
   });
 };

@@ -5,6 +5,7 @@ import {
   getSubjectById,
   updateSubject,
   deleteSubject,
+  getStudentSubjects,
 } from "./subject.service";
 
 export const createSubjectController = async (req: Request, res: Response) => {
@@ -73,3 +74,19 @@ export const deleteSubjectController =
       data: result,
     });
 };
+
+export const getStudentSubjectsController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    const result =
+      await getStudentSubjects(
+        (req as any).user.id
+      );
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  };
