@@ -7,6 +7,7 @@ import {
   updateResourceController,
   deleteResourceController,
   getStudentResourcesController,
+  getStudentChapterResourcesController,
 } from "./resource.controller";
 
 import { upload } from "../../middlewares/upload";
@@ -21,6 +22,12 @@ router.post("/", createResourceController);
 router.get("/", getAllResourcesController);
 
 router.get("/student", auth("STUDENT"), getStudentResourcesController);
+
+router.get(
+  "/student/chapter/:chapterId",
+  auth("STUDENT"),
+  getStudentChapterResourcesController,
+);
 
 router.get("/:id", getResourceByIdController);
 

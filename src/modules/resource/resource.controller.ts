@@ -10,6 +10,7 @@ import {
   getResourceById,
   updateResource,
   deleteResource,
+  getStudentChapterResources,
 } from "./resource.service";
 
 export const createResourceController = async (req: Request, res: Response) => {
@@ -76,3 +77,21 @@ export const getStudentResourcesController = async (
     data: result,
   });
 };
+
+export const getStudentChapterResourcesController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    const result =
+      await getStudentChapterResources(
+        (req as any).user.id,
+        req.params.chapterId as string
+      );
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  };

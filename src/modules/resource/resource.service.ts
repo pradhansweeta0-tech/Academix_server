@@ -107,3 +107,57 @@ export const getStudentResources = async (studentId: string) => {
     },
   });
 };
+
+export const getStudentChapterResources =
+  async (
+    studentId: string,
+    chapterId: string
+  ) => {
+
+    const student =
+      await prisma.student.findUnique({
+        where: {
+          id: studentId,
+        },
+      });
+
+    if (!student) {
+      throw new Error(
+        "Student not found"
+      );
+    }
+
+    return prisma.resource.findMany({
+      where: {
+        content: {
+          chapterId,
+
+          chapter: {
+            subject: {
+              classId:
+                student.classId,
+
+              boardId:
+                student.boardId,
+            },
+          },
+        },
+      },
+
+      include: {
+        content: {
+          include: {
+            chapter: {
+              include: {
+                subject: true,
+              },
+            },
+          },
+        },
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  };
