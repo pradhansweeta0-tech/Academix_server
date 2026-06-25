@@ -7,122 +7,105 @@ import {
   updateAssignment,
   deleteAssignment,
   getStudentAssignments,
+  getStudentAssignmentById,
 } from "./assignment.service";
 
-export const createAssignmentController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const createAssignmentController = async (
+  req: Request,
+  res: Response,
+) => {
+  const user = (req as any).user;
 
-    const user = (req as any).user;
+  const result = await createAssignment(user.id, req.body);
 
-    const result =
-      await createAssignment(
-        user.id,
-        req.body
-      );
+  res.status(201).json({
+    success: true,
+    data: result,
+  });
+};
 
-    res.status(201).json({
-      success: true,
-      data: result,
-    });
-  };
+export const getAssignmentsController = async (req: Request, res: Response) => {
+  const user = (req as any).user;
 
-export const getAssignmentsController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+  const result = await getAssignments(user.id);
 
-    const user = (req as any).user;
+  res.json({
+    success: true,
+    data: result,
+  });
+};
 
-    const result =
-      await getAssignments(
-        user.id
-      );
+export const getAssignmentByIdController = async (
+  req: Request,
+  res: Response,
+) => {
+  const user = (req as any).user;
 
-    res.json({
-      success: true,
-      data: result,
-    });
-  };
+  const result = await getAssignmentById(user.id, req.params.id as string);
 
-export const getAssignmentByIdController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+  res.json({
+    success: true,
+    data: result,
+  });
+};
 
-    const user = (req as any).user;
+export const updateAssignmentController = async (
+  req: Request,
+  res: Response,
+) => {
+  const user = (req as any).user;
 
-    const result =
-      await getAssignmentById(
-        user.id,
-        req.params.id as string,
-      );
+  const result = await updateAssignment(
+    user.id,
+    req.params.id as string,
+    req.body,
+  );
 
-    res.json({
-      success: true,
-      data: result,
-    });
-  };
+  res.json({
+    success: true,
+    data: result,
+  });
+};
 
-export const updateAssignmentController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const deleteAssignmentController = async (
+  req: Request,
+  res: Response,
+) => {
+  const user = (req as any).user;
 
-    const user = (req as any).user;
+  const result = await deleteAssignment(user.id, req.params.id as string);
 
-    const result =
-      await updateAssignment(
-        user.id,
-        req.params.id as string,
-        req.body
-      );
+  res.json({
+    success: true,
+    data: result,
+  });
+};
 
-    res.json({
-      success: true,
-      data: result,
-    });
-  };
+export const getStudentAssignmentsController = async (
+  req: Request,
+  res: Response,
+) => {
+  const result = await getStudentAssignments((req as any).user.id);
 
-export const deleteAssignmentController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+  res.json({
+    success: true,
+    data: result,
+  });
+};
 
-    const user = (req as any).user;
+export const getStudentAssignmentsControllerById = async (
+  req: Request,
+  res: Response,
+) => {
+  const user = (req as any).user;
 
-    const result =
-      await deleteAssignment(
-        user.id,
-        req.params.id as string
-      );
+  const result = await getStudentAssignmentById(
+    user.id,
+    req.params.id as string,
+  );
 
-    res.json({
-      success: true,
-      data: result,
-    });
-  };
-
-  export const getStudentAssignmentsController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-
-    const result =
-      await getStudentAssignments(
-        (req as any).user.id
-      );
-
-    res.json({
-      success: true,
-      data: result,
-    });
-
-  };
+  res.json({
+    success: true,
+    data: result,
+  });
+};

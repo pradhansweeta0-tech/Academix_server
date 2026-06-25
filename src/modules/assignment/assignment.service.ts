@@ -172,3 +172,60 @@ export const getStudentAssignments = async (studentId: string) => {
       new Date(assignment.dueDate) < new Date(),
   }));
 };
+
+export const getStudentAssignmentById = async (
+  studentId: string,
+  assignmentId: string,
+) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: studentId,
+    },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  const assignment = await prisma.assignment.findFirst({
+    where: {
+      id: assignmentId,
+
+      classId: student.classId,
+
+      subject: {
+        boardId: student.boardId,
+      },
+    },
+
+    include: {
+      subject: true,
+
+      teacher: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+
+      submissions: {
+        where: {
+          studentId,
+        },
+      },
+    },
+  });
+
+  if (!assignment) {
+    throw new Error("Assignment not found");
+  }
+
+  return {
+    ...assignment,
+
+    status: assignment.submissions.length > 0 ? "SUBMITTED" : "PENDING",
+
+    submission: assignment.submissions[0] || null,
+  };
+};

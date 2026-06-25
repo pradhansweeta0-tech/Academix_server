@@ -8,44 +8,23 @@ import {
   updateAssignmentController,
   deleteAssignmentController,
   getStudentAssignmentsController,
+  getStudentAssignmentsControllerById,
 } from "./assignment.controller";
 
 const router = Router();
 
-router.post(
-  "/",
-  auth("TEACHER"),
-  createAssignmentController
-);
+router.post("/", auth("TEACHER"), createAssignmentController);
 
-router.get(
-  "/",
-  auth("TEACHER"),
-  getAssignmentsController
-);
+router.get("/", auth("TEACHER"), getAssignmentsController);
 
-router.get(
-  "/student",
-  auth("STUDENT"),
-  getStudentAssignmentsController
-);
+router.get("/student", auth("STUDENT"), getStudentAssignmentsController);
 
-router.get(
-  "/:id",
-  auth("TEACHER"),
-  getAssignmentByIdController
-);
+router.get("/:id", auth("STUDENT"), getStudentAssignmentsControllerById);
 
-router.patch(
-  "/:id",
-  auth("TEACHER"),
-  updateAssignmentController
-);
+router.get("/:id", auth("TEACHER"), getAssignmentByIdController);
 
-router.delete(
-  "/:id",
-  auth("TEACHER"),
-  deleteAssignmentController
-);
+router.patch("/:id", auth("TEACHER"), updateAssignmentController);
+
+router.delete("/:id", auth("TEACHER"), deleteAssignmentController);
 
 export default router;
