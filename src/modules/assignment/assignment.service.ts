@@ -124,3 +124,51 @@ export const deleteAssignment = async (teacherId: string, id: string) => {
     },
   });
 };
+
+export const getStudentAssignments = async (studentId: string) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: studentId,
+    },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  const assignments = await prisma.assignment.findMany({
+    where: {
+      classId: student.classId,
+      subject: {
+        boardId: student.boardId,
+      },
+    },
+
+    include: {
+      subject: true,
+      teacher: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      submissions: {
+        where: {
+          studentId,
+        },
+      },
+    },
+
+    orderBy: {
+      dueDate: "asc",
+    },
+  });
+
+  return assignments.map((assignment) => ({
+    ...assignment,
+    status: assignment.submissions.length > 0 ? "SUBMITTED" : "PENDING",
+    isOverdue:
+      assignment.submissions.length === 0 &&
+      new Date(assignment.dueDate) < new Date(),
+  }));
+};

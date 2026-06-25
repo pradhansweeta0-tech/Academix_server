@@ -6,6 +6,7 @@ import {
   getAssignmentById,
   updateAssignment,
   deleteAssignment,
+  getStudentAssignments,
 } from "./assignment.service";
 
 export const createAssignmentController =
@@ -106,4 +107,22 @@ export const deleteAssignmentController =
       success: true,
       data: result,
     });
+  };
+
+  export const getStudentAssignmentsController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    const result =
+      await getStudentAssignments(
+        (req as any).user.id
+      );
+
+    res.json({
+      success: true,
+      data: result,
+    });
+
   };

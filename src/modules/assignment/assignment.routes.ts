@@ -7,6 +7,7 @@ import {
   getAssignmentByIdController,
   updateAssignmentController,
   deleteAssignmentController,
+  getStudentAssignmentsController,
 } from "./assignment.controller";
 
 const router = Router();
@@ -21,6 +22,12 @@ router.get(
   "/",
   auth("TEACHER"),
   getAssignmentsController
+);
+
+router.get(
+  "/student",
+  auth("STUDENT"),
+  getStudentAssignmentsController
 );
 
 router.get(
