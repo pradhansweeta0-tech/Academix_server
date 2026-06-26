@@ -129,3 +129,120 @@ export const deleteTest = async (teacherId: string, id: string) => {
     },
   });
 };
+
+export const getStudentTests = async (studentId: string) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: studentId,
+    },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  const tests = await prisma.test.findMany({
+    where: {
+      subject: {
+        classId: student.classId,
+        boardId: student.boardId,
+      },
+    },
+
+    include: {
+      subject: true,
+
+      attempts: {
+        where: {
+          studentId,
+        },
+
+        select: {
+          id: true,
+          score: true,
+          createdAt: true,
+        },
+      },
+
+      _count: {
+        select: {
+          questions: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return tests.map((test) => ({
+    ...test,
+
+    attempted: test.attempts.length > 0,
+
+    attempt: test.attempts[0] || null,
+
+    totalQuestions: test._count.questions,
+  }));
+};
+
+export const getStudentTestById = async (
+  studentId: string,
+  testId: string,
+) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      id: studentId,
+    },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  const test = await prisma.test.findFirst({
+    where: {
+      id: testId,
+
+      subject: {
+        classId: student.classId,
+        boardId: student.boardId,
+      },
+    },
+
+    include: {
+      subject: true,
+
+      questions: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+
+      attempts: {
+        where: {
+          studentId,
+        },
+
+        select: {
+          id: true,
+          score: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  if (!test) {
+    throw new Error("Test not found");
+  }
+
+  return {
+    ...test,
+
+    attempted: test.attempts.length > 0,
+
+    attempt: test.attempts[0] || null,
+  };
+};

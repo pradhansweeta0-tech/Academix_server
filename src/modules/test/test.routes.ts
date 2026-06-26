@@ -7,6 +7,8 @@ import {
   getTestByIdController,
   updateTestController,
   deleteTestController,
+  getStudentTestsController,
+  getStudentTestByIdController,
 } from "./test.controller";
 
 const router = Router();
@@ -14,6 +16,10 @@ const router = Router();
 router.post("/", auth("TEACHER"), createTestController);
 
 router.get("/", auth("TEACHER"), getTestsController);
+
+router.get("/student", auth("STUDENT"), getStudentTestsController);
+
+router.get("/student/:id", auth("STUDENT"), getStudentTestByIdController);
 
 router.get("/:id", auth("TEACHER"), getTestByIdController);
 
