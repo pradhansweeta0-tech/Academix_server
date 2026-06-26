@@ -2,14 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 export const auth = (...roles: string[]) => {
-  return (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token =
-        req.headers.authorization?.split(" ")[1];
+      const token = req.headers.authorization?.split(" ")[1];
 
       if (!token) {
         return res.status(401).json({
@@ -20,13 +15,13 @@ export const auth = (...roles: string[]) => {
 
       const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET as string
+        process.env.JWT_SECRET as string,
       ) as any;
 
-      if (
-        roles.length &&
-        !roles.includes(decoded.role)
-      ) {
+      console.log("JWT Payload:", decoded);
+      console.log("Allowed Roles:", roles);
+
+      if (roles.length && !roles.includes(decoded.role)) {
         return res.status(403).json({
           success: false,
           message: "Access Denied",
