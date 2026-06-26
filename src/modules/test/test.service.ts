@@ -145,21 +145,6 @@ export const getStudentTests = async (studentId: string) => {
     where: {
       isPublished: true,
 
-      startTime: {
-        lte: new Date(),
-      },
-
-      OR: [
-        {
-          endTime: null,
-        },
-        {
-          endTime: {
-            gte: new Date(),
-          },
-        },
-      ],
-
       subject: {
         classId: student.classId,
         boardId: student.boardId,
