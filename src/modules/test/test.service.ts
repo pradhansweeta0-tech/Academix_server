@@ -143,6 +143,23 @@ export const getStudentTests = async (studentId: string) => {
 
   const tests = await prisma.test.findMany({
     where: {
+      isPublished: true,
+
+      startTime: {
+        lte: new Date(),
+      },
+
+      OR: [
+        {
+          endTime: null,
+        },
+        {
+          endTime: {
+            gte: new Date(),
+          },
+        },
+      ],
+
       subject: {
         classId: student.classId,
         boardId: student.boardId,
@@ -187,10 +204,7 @@ export const getStudentTests = async (studentId: string) => {
   }));
 };
 
-export const getStudentTestById = async (
-  studentId: string,
-  testId: string,
-) => {
+export const getStudentTestById = async (studentId: string, testId: string) => {
   const student = await prisma.student.findUnique({
     where: {
       id: studentId,
@@ -217,6 +231,25 @@ export const getStudentTestById = async (
       questions: {
         orderBy: {
           createdAt: "asc",
+        },
+
+        select: {
+          id: true,
+
+          question: true,
+          questionImage: true,
+
+          optionA: true,
+          optionB: true,
+          optionC: true,
+          optionD: true,
+
+          optionAImage: true,
+          optionBImage: true,
+          optionCImage: true,
+          optionDImage: true,
+
+          marks: true,
         },
       },
 
