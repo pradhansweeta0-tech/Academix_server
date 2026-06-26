@@ -19,9 +19,13 @@ router.get("/", auth("TEACHER"), getAssignmentsController);
 
 router.get("/student", auth("STUDENT"), getStudentAssignmentsController);
 
-router.get("/:id", auth("STUDENT"), getStudentAssignmentsControllerById);
+router.get(
+  "/student/:id",
+  auth("STUDENT"),
+  getStudentAssignmentsControllerById,
+);
 
-router.get("/:id", auth("TEACHER"), getAssignmentByIdController);
+router.get("/teacher/:id", auth("TEACHER"), getAssignmentByIdController);
 
 router.patch("/:id", auth("TEACHER"), updateAssignmentController);
 
