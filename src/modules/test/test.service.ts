@@ -186,6 +186,8 @@ export const getStudentTests = async (studentId: string) => {
     attempt: test.attempts[0] || null,
 
     totalQuestions: test._count.questions,
+
+    resultAvailable: test.endTime ? new Date() >= new Date(test.endTime) : true,
   }));
 };
 
