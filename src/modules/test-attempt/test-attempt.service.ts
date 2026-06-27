@@ -87,3 +87,37 @@ export const getTestAttempts = async (testId: string) => {
     },
   });
 };
+
+export const getStudentTestResult = async (
+  studentId: string,
+  testId: string,
+) => {
+  const attempt = await prisma.testAttempt.findFirst({
+    where: {
+      studentId,
+      testId,
+    },
+
+    include: {
+      test: {
+        include: {
+          subject: true,
+
+          questions: true,
+        },
+      },
+
+      answers: {
+        include: {
+          question: true,
+        },
+      },
+    },
+  });
+
+  if (!attempt) {
+    throw new Error("Result not found");
+  }
+
+  return attempt;
+};

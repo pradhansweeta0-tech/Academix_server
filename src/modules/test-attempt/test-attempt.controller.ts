@@ -4,6 +4,7 @@ import {
   attemptTest,
   getMyAttempts,
   getTestAttempts,
+  getStudentTestResult,
 } from "./test-attempt.service";
 
 export const attemptTestController = async (req: Request, res: Response) => {
@@ -42,4 +43,27 @@ export const getTestAttemptsController = async (
     success: true,
     data: result,
   });
+};
+
+export const getStudentTestResultController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const result = await getStudentTestResult(
+      (req as any).user.id,
+      req.params.testId as string,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Result fetched successfully.",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
