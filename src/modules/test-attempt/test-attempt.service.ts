@@ -119,5 +119,35 @@ export const getStudentTestResult = async (
     throw new Error("Result not found");
   }
 
-  return attempt;
+  const totalQuestions = attempt.test.questions.length;
+
+const correctAnswers = attempt.answers.filter(
+  (answer) =>
+    answer.selectedAnswer ===
+    answer.question.correctAnswer,
+).length;
+
+const wrongAnswers =
+  attempt.answers.length - correctAnswers;
+
+const unanswered =
+  totalQuestions - attempt.answers.length;
+
+const percentage =
+  (attempt.score / attempt.test.totalMarks) * 100;
+
+return {
+  ...attempt,
+
+  totalQuestions,
+
+  correctAnswers,
+
+  wrongAnswers,
+
+  unanswered,
+
+  percentage: Number(percentage.toFixed(1)),
+};
+
 };
