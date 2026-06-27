@@ -69,8 +69,8 @@ export const generateStudentIdCard = async (studentId: string) => {
     // Logo
     try {
       doc.image(logoPath, 10, 5, {
-        width: 30,
-        height: 30,
+        width: 35,
+        height: 35,
       });
     } catch (error) {
       console.error("Logo load failed");
