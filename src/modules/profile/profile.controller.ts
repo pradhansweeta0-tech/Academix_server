@@ -63,3 +63,19 @@ export const verifyStudentCardController = async (
     data: result,
   });
 };
+
+export const downloadStudentIdCardController = async (
+  req: Request,
+  res: Response,
+) => {
+  const pdf = await generateStudentIdCard((req as any).user.id);
+
+  res.setHeader("Content-Type", "application/pdf");
+
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="NBCA-ID-Card.pdf"',
+  );
+
+  res.send(pdf);
+};

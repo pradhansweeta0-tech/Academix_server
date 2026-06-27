@@ -5,6 +5,7 @@ import {
   getStudentIdCardController,
   viewStudentIdCardController,
   verifyStudentCardController,
+  downloadStudentIdCardController,
 } from "./profile.controller";
 import { auth } from "../../middlewares/auth";
 
@@ -14,6 +15,7 @@ router.get("/me", auth(), getMyProfileController);
 router.put("/me", auth(), updateMyProfileController);
 router.get("/id-card", auth(), getStudentIdCardController);
 router.get("/id-card/view", auth("STUDENT"), viewStudentIdCardController);
+router.get("/id-card/pdf", auth("STUDENT"), downloadStudentIdCardController);
 router.get("/verify/:studentId", verifyStudentCardController);
 
 export default router;
