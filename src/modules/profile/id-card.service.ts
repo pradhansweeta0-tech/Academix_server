@@ -21,7 +21,7 @@ export const generateStudentIdCard = async (studentId: string) => {
   }
 
   // Generate QR Code
-  const verificationUrl = `https://nbca.in/verify/${student.studentId}`;
+  const verificationUrl = `https://nbca.co.in/verify/${student.studentId}`;
 
   const qrCodeDataUrl = await QRCode.toDataURL(verificationUrl);
 
