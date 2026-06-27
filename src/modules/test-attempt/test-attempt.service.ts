@@ -139,6 +139,8 @@ const percentage =
 return {
   ...attempt,
 
+  questions: attempt.test.questions,
+
   totalQuestions,
 
   correctAnswers,
