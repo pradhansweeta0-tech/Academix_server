@@ -22,7 +22,7 @@ export const updateMyProfile = async (studentId: string, payload: any) => {
 
   if (payload.email !== undefined) updateData.email = payload.email;
 
-  if (payload.mobile !== undefined) updateData.mobile = payload.mobile;
+  if (payload.phone !== undefined) updateData.phone = payload.phone;
 
   if (payload.gender !== undefined) updateData.gender = payload.gender;
 
@@ -34,33 +34,34 @@ export const updateMyProfile = async (studentId: string, payload: any) => {
   if (payload.guardianPhone !== undefined)
     updateData.guardianPhone = payload.guardianPhone;
 
- if (payload.photo) {
-  const student = await prisma.student.findUnique({
-    where: { id: studentId },
-    select: {
-      photo: true,
-      photoUpdateCount: true,
-    },
-  });
+  if (payload.photo) {
+    const student = await prisma.student.findUnique({
+      where: { id: studentId },
+      select: {
+        photo: true,
+        photoUpdateCount: true,
+      },
+    });
 
-  if (!student) {
-    throw new Error("Student not found");
-  }
-
-  if (student.photo !== payload.photo) {
-    if (student.photoUpdateCount >= 3) {
-      throw new Error("You have reached the maximum profile photo update limit.");
+    if (!student) {
+      throw new Error("Student not found");
     }
 
-    updateData.photo = payload.photo;
+    if (student.photo !== payload.photo) {
+      if (student.photoUpdateCount >= 3) {
+        throw new Error(
+          "You have reached the maximum profile photo update limit.",
+        );
+      }
 
-    updateData.photoUpdateCount = {
-      increment: 1,
-    };
+      updateData.photo = payload.photo;
+
+      updateData.photoUpdateCount = {
+        increment: 1,
+      };
+    }
   }
-}
 
-  
   return prisma.student.update({
     where: {
       id: studentId,
