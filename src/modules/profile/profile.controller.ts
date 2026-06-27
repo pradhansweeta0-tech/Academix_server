@@ -39,7 +39,7 @@ export const getStudentIdCardController = async (
   });
 };
 
-export const downloadStudentIdCardController = async (
+export const viewStudentIdCardController = async (
   req: Request,
   res: Response,
 ) => {
@@ -47,10 +47,7 @@ export const downloadStudentIdCardController = async (
 
   res.setHeader("Content-Type", "application/pdf");
 
-  res.setHeader(
-    "Content-Disposition",
-    "attachment; filename=student-id-card.pdf",
-  );
+  res.setHeader("Content-Disposition", 'inline; filename="NBCA-ID-Card.pdf"');
 
   res.send(pdf);
 };
