@@ -260,7 +260,8 @@ model Student {
 
   password String
 
-  photo String?
+  photo            String?
+  photoUpdateCount Int     @default(0)
 
   gender String?
 

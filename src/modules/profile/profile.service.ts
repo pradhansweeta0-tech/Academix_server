@@ -34,8 +34,33 @@ export const updateMyProfile = async (studentId: string, payload: any) => {
   if (payload.guardianPhone !== undefined)
     updateData.guardianPhone = payload.guardianPhone;
 
-  if (payload.photo !== undefined) updateData.photo = payload.photo;
+ if (payload.photo) {
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    select: {
+      photo: true,
+      photoUpdateCount: true,
+    },
+  });
 
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  if (student.photo !== payload.photo) {
+    if (student.photoUpdateCount >= 3) {
+      throw new Error("You have reached the maximum profile photo update limit.");
+    }
+
+    updateData.photo = payload.photo;
+
+    updateData.photoUpdateCount = {
+      increment: 1,
+    };
+  }
+}
+
+  
   return prisma.student.update({
     where: {
       id: studentId,
