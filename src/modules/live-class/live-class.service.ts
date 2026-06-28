@@ -361,7 +361,7 @@ export const joinLiveClass = async (studentId: string, liveClassId: string) => {
 
   if (now < joinTime) {
     throw new Error(
-      "You can join this class only 10 minutes before it starts.",
+      "You can join this class only 5 minutes before it starts.",
     );
   }
 
