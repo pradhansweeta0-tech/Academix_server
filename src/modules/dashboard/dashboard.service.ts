@@ -108,21 +108,33 @@ export const getStudentDashboard = async (studentId: string) => {
     },
   });
 
-  const attendances = await prisma.attendance.findMany({
+  const completedLiveClasses = await prisma.liveClass.count({
     where: {
-      studentId,
+      classId: student!.classId,
+
+      isActive: true,
+
+      endTime: {
+        lt: new Date(),
+      },
     },
   });
 
-  const totalAttendance = attendances.length;
+  const presentAttendance = await prisma.attendance.count({
+    where: {
+      studentId,
 
-  const presentAttendance = attendances.filter(
-    (attendance) => attendance.status === "PRESENT",
-  ).length;
+      status: "PRESENT",
+
+      liveClassId: {
+        not: null,
+      },
+    },
+  });
 
   const attendancePercentage =
-    totalAttendance > 0
-      ? Number(((presentAttendance / totalAttendance) * 100).toFixed(2))
+    completedLiveClasses > 0
+      ? Number(((presentAttendance / completedLiveClasses) * 100).toFixed(2))
       : 0;
 
   const assignmentsSubmitted = await prisma.assignmentSubmission.count({

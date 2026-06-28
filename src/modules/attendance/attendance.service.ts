@@ -5,46 +5,31 @@ export const createAttendance = async (
   payload: {
     studentId: string;
     status: "PRESENT" | "ABSENT" | "LATE";
-  }
+  },
 ) => {
-
   const today = new Date();
 
-  const existingAttendance =
-    await prisma.attendance.findFirst({
-      where: {
-        studentId: payload.studentId,
+  const existingAttendance = await prisma.attendance.findFirst({
+    where: {
+      studentId: payload.studentId,
 
-        date: {
-          gte: new Date(
-            today.setHours(0, 0, 0, 0)
-          ),
+      date: {
+        gte: new Date(today.setHours(0, 0, 0, 0)),
 
-          lte: new Date(
-            today.setHours(
-              23,
-              59,
-              59,
-              999
-            )
-          ),
-        },
+        lte: new Date(today.setHours(23, 59, 59, 999)),
       },
-    });
+    },
+  });
 
   if (existingAttendance) {
-    throw new Error(
-      "Attendance already marked today"
-    );
+    throw new Error("Attendance already marked today");
   }
 
   return prisma.attendance.create({
     data: {
-      studentId:
-        payload.studentId,
+      studentId: payload.studentId,
 
-      status:
-        payload.status,
+      status: payload.status,
 
       teacherId,
 
@@ -58,10 +43,7 @@ export const createAttendance = async (
   });
 };
 
-export const getAttendance = async (
-  teacherId: string
-) => {
-
+export const getAttendance = async (teacherId: string) => {
   return prisma.attendance.findMany({
     where: {
       teacherId,
@@ -77,18 +59,14 @@ export const getAttendance = async (
   });
 };
 
-export const getMyAttendance =
-  async (
-    studentId: string
-  ) => {
+export const getMyAttendance = async (studentId: string) => {
+  return prisma.attendance.findMany({
+    where: {
+      studentId,
+    },
 
-    return prisma.attendance.findMany({
-      where: {
-        studentId,
-      },
-
-      orderBy: {
-        date: "desc",
-      },
-    });
-  };
+    orderBy: {
+      date: "desc",
+    },
+  });
+};
