@@ -47,8 +47,8 @@ export const generateStudentIdCard = async (studentId: string) => {
           fit: "cover",
           position: "centre",
         })
-        .jpeg({
-          quality: 100,
+        .png({
+          compressionLevel: 0,
         })
         .toBuffer();
     } catch (error) {
