@@ -99,6 +99,7 @@ export const verifyStudentCard = async (studentId: string) => {
     include: {
       board: true,
       class: true,
+      academicSession: true,
     },
   });
 
@@ -113,5 +114,6 @@ export const verifyStudentCard = async (studentId: string) => {
     board: student.board.name,
     class: student.class.name,
     status: student.isActive ? "ACTIVE" : "INACTIVE",
+    session: student.academicSession.name,
   };
 };
