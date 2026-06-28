@@ -3,6 +3,33 @@ import { sendEmail } from "../../services/email/email.service";
 import { liveClassTemplate } from "../../services/email/templates/live-class.template";
 
 export const createLiveClass = async (teacherId: string, payload: any) => {
+  const existingClass = await prisma.liveClass.findFirst({
+    where: {
+      teacherId,
+
+      isActive: true,
+
+      AND: [
+        {
+          startTime: {
+            lt: new Date(payload.endTime),
+          },
+        },
+        {
+          endTime: {
+            gt: new Date(payload.startTime),
+          },
+        },
+      ],
+    },
+  });
+
+  if (existingClass) {
+    throw new Error(
+      "You already have another live class scheduled during this time.",
+    );
+  }
+
   const liveClass = await prisma.liveClass.create({
     data: {
       title: payload.title,
@@ -30,28 +57,24 @@ export const createLiveClass = async (teacherId: string, payload: any) => {
     },
   });
 
-  for (const student of students) {
-    if (!student.email) continue;
-
-    Promise.all(
-      students
-        .filter((student) => student.email)
-        .map((student) =>
-          sendEmail(
-            student.email!,
-            `New Live Class - ${liveClass.title}`,
-            liveClassTemplate(
-              student.name,
-              liveClass.title,
-              liveClass.subject.name,
-              liveClass.teacher.name,
-              liveClass.meetingLink,
-              liveClass.startTime,
-            ),
+  await Promise.all(
+    students
+      .filter((student) => student.email)
+      .map((student) =>
+        sendEmail(
+          student.email!,
+          `New Live Class - ${liveClass.title}`,
+          liveClassTemplate(
+            student.name,
+            liveClass.title,
+            liveClass.subject.name,
+            liveClass.teacher.name,
+            liveClass.meetingLink,
+            liveClass.startTime,
           ),
         ),
-    );
-  }
+      ),
+  );
 
   return liveClass;
 };
@@ -106,6 +129,37 @@ export const updateLiveClass = async (
   id: string,
   payload: any,
 ) => {
+  const existingClass = await prisma.liveClass.findFirst({
+    where: {
+      teacherId,
+
+      id: {
+        not: id,
+      },
+
+      isActive: true,
+
+      AND: [
+        {
+          startTime: {
+            lt: new Date(payload.endTime),
+          },
+        },
+        {
+          endTime: {
+            gt: new Date(payload.startTime),
+          },
+        },
+      ],
+    },
+  });
+
+  if (existingClass) {
+    throw new Error(
+      "You already have another live class scheduled during this time.",
+    );
+  }
+
   const liveClass = await prisma.liveClass.findFirst({
     where: {
       id,
@@ -115,6 +169,20 @@ export const updateLiveClass = async (
 
   if (!liveClass) {
     throw new Error("Live Class not found");
+  }
+
+  const now = new Date();
+
+  const joinTime = new Date(liveClass.startTime);
+
+  joinTime.setMinutes(joinTime.getMinutes() - 10);
+
+  if (now < joinTime) {
+    throw new Error("You can join the class only 10 minutes before it starts.");
+  }
+
+  if (now > liveClass.endTime) {
+    throw new Error("This live class has already ended.");
   }
 
   return prisma.liveClass.update({
@@ -178,7 +246,7 @@ export const getStudentLiveClasses = async (studentId: string) => {
     throw new Error("Student not found");
   }
 
-  return prisma.liveClass.findMany({
+  const liveClasses = await prisma.liveClass.findMany({
     where: {
       classId: student.classId,
       isActive: true,
@@ -188,11 +256,54 @@ export const getStudentLiveClasses = async (studentId: string) => {
       teacher: true,
       class: true,
       subject: true,
+
+      attendances: {
+        where: {
+          studentId,
+        },
+
+        select: {
+          id: true,
+        },
+      },
     },
 
     orderBy: {
       startTime: "asc",
     },
+  });
+
+  const now = new Date();
+
+  return liveClasses.map((liveClass) => {
+    const joinTime = new Date(liveClass.startTime);
+
+    joinTime.setMinutes(joinTime.getMinutes() - 10);
+
+    let status: "UPCOMING" | "LIVE" | "COMPLETED";
+
+    if (now < liveClass.startTime) {
+      status = "UPCOMING";
+    } else if (now > liveClass.endTime) {
+      status = "COMPLETED";
+    } else {
+      status = "LIVE";
+    }
+
+    return {
+      ...liveClass,
+
+      status,
+
+      canJoin: now >= joinTime && now <= liveClass.endTime,
+
+      hasAttended: liveClass.attendances.length > 0,
+
+      meetingLink:
+        now >= joinTime && now <= liveClass.endTime
+          ? liveClass.meetingLink
+          : null,
+    };
   });
 };
 
@@ -222,7 +333,29 @@ export const joinLiveClass = async (studentId: string, liveClassId: string) => {
   });
 
   if (!liveClass) {
-    throw new Error("You are not allowed to access this class");
+    throw new Error("You are not allowed to access this class.");
+  }
+
+  const now = new Date();
+
+  const joinTime = new Date(liveClass.startTime);
+
+  const JOIN_WINDOW_MINUTES = 5;
+
+  joinTime.setMinutes(joinTime.getMinutes() - JOIN_WINDOW_MINUTES);
+
+  if (now < joinTime) {
+    throw new Error(
+      "You can join this class only 10 minutes before it starts.",
+    );
+  }
+
+  if (now > liveClass.endTime) {
+    throw new Error("This live class has already ended.");
+  }
+
+  if (!liveClass.meetingLink) {
+    throw new Error("Meeting link is not available.");
   }
 
   await prisma.attendance.upsert({
@@ -233,22 +366,25 @@ export const joinLiveClass = async (studentId: string, liveClassId: string) => {
       },
     },
 
-    update: {},
+    update: {
+      status: "PRESENT",
+      date: new Date(),
+    },
 
     create: {
       date: new Date(),
-
       status: "PRESENT",
-
       studentId,
-
       teacherId: liveClass.teacherId,
-
       liveClassId: liveClass.id,
     },
   });
 
-  return liveClass;
+  return {
+    message: "Live class joined successfully.",
+    meetingLink: liveClass.meetingLink,
+    liveClass,
+  };
 };
 
 export const getLiveClassAttendance = async (
