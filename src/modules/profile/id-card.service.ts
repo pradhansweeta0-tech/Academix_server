@@ -2,6 +2,7 @@ import PDFDocument from "pdfkit";
 import { prisma } from "../../config/prisma";
 import QRCode from "qrcode";
 import path from "path";
+import sharp from "sharp";
 
 export const generateStudentIdCard = async (studentId: string) => {
   const student = await prisma.student.findUnique({
@@ -39,7 +40,17 @@ export const generateStudentIdCard = async (studentId: string) => {
 
       const arrayBuffer = await response.arrayBuffer();
 
-      photoBuffer = Buffer.from(arrayBuffer);
+      const originalBuffer = Buffer.from(arrayBuffer);
+
+      photoBuffer = await sharp(originalBuffer)
+        .resize(70, 70, {
+          fit: "cover",
+          position: "centre",
+        })
+        .jpeg({
+          quality: 100,
+        })
+        .toBuffer();
     } catch (error) {
       console.error("Failed to load student photo:", error);
     }
@@ -68,9 +79,10 @@ export const generateStudentIdCard = async (studentId: string) => {
 
     // Logo
     try {
-      doc.image(logoPath, 10, 5, {
-        width: 35,
-        height: 35,
+      doc.image(logoPath, 15, 8, {
+        fit: [28, 28],
+        align: "center",
+        valign: "center",
       });
     } catch (error) {
       console.error("Logo load failed");
@@ -79,15 +91,16 @@ export const generateStudentIdCard = async (studentId: string) => {
     // Academy Name
     doc
       .fillColor("white")
+      .font("Helvetica-Bold")
       .fontSize(14)
-      .text("North Bengal Cloud Academy", 50, 12);
+      .text("North Bengal Cloud Academy", 52, 10);
 
-    doc.fontSize(8).text("Student Identity Card", 50, 28);
+    doc.font("Helvetica").fontSize(8).text("Student Identity Card", 52, 27);
 
     doc.fillColor("black");
 
     // Student Photo
-    doc.rect(18, 58, 74, 74).stroke();
+    doc.lineWidth(1.5).strokeColor("#1E40AF").rect(18, 58, 74, 74).stroke();
 
     if (photoBuffer) {
       doc.image(photoBuffer, 20, 60, {
