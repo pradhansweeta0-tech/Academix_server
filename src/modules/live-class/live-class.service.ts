@@ -3,6 +3,13 @@ import { sendEmail } from "../../services/email/email.service";
 import { liveClassTemplate } from "../../services/email/templates/live-class.template";
 
 export const createLiveClass = async (teacherId: string, payload: any) => {
+  const startTime = new Date(payload.startTime);
+  const endTime = new Date(payload.endTime);
+
+  if (startTime >= endTime) {
+    throw new Error("End time must be later than the start time.");
+  }
+
   const existingClass = await prisma.liveClass.findFirst({
     where: {
       teacherId,
@@ -129,6 +136,24 @@ export const updateLiveClass = async (
   id: string,
   payload: any,
 ) => {
+  const startTime = new Date(payload.startTime);
+  const endTime = new Date(payload.endTime);
+
+  if (startTime >= endTime) {
+    throw new Error("End time must be later than the start time.");
+  }
+
+  const liveClass = await prisma.liveClass.findFirst({
+    where: {
+      id,
+      teacherId,
+    },
+  });
+
+  if (!liveClass) {
+    throw new Error("Live class not found.");
+  }
+
   const existingClass = await prisma.liveClass.findFirst({
     where: {
       teacherId,
@@ -142,12 +167,12 @@ export const updateLiveClass = async (
       AND: [
         {
           startTime: {
-            lt: new Date(payload.endTime),
+            lt: endTime,
           },
         },
         {
           endTime: {
-            gt: new Date(payload.startTime),
+            gt: startTime,
           },
         },
       ],
@@ -160,37 +185,27 @@ export const updateLiveClass = async (
     );
   }
 
-  const liveClass = await prisma.liveClass.findFirst({
-    where: {
-      id,
-      teacherId,
-    },
-  });
-
-  if (!liveClass) {
-    throw new Error("Live Class not found");
-  }
-
-  const now = new Date();
-
-  const joinTime = new Date(liveClass.startTime);
-
-  joinTime.setMinutes(joinTime.getMinutes() - 10);
-
-  if (now < joinTime) {
-    throw new Error("You can join the class only 10 minutes before it starts.");
-  }
-
-  if (now > liveClass.endTime) {
-    throw new Error("This live class has already ended.");
-  }
-
   return prisma.liveClass.update({
     where: {
       id,
     },
 
-    data: payload,
+    data: {
+      title: payload.title,
+      description: payload.description,
+      meetingLink: payload.meetingLink,
+      startTime,
+      endTime,
+      classId: payload.classId,
+      subjectId: payload.subjectId,
+      isActive: payload.isActive,
+    },
+
+    include: {
+      teacher: true,
+      class: true,
+      subject: true,
+    },
   });
 };
 
