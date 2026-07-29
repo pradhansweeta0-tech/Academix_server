@@ -116,144 +116,171 @@ export const studentLogin = async (studentId: string, password: string) => {
 };
 
 export const studentSignup = async (payload: any) => {
-  const verifiedOTP = await prisma.oTP.findFirst({
-    where: {
-      email: payload.email,
-      verified: true,
-    },
-  });
+  try {
+    console.log("========== STUDENT SIGNUP ==========");
+    console.log("Payload:", payload);
 
-  if (!verifiedOTP) {
-    throw new Error("Email not verified");
-  }
+    console.log("Step 1: Checking verified OTP...");
+    const verifiedOTP = await prisma.oTP.findFirst({
+      where: {
+        email: payload.email,
+        verified: true,
+      },
+    });
 
-  const existingStudent = await prisma.student.findUnique({
-    where: {
-      email: payload.email,
-    },
-  });
-
-  if (existingStudent) {
-    throw new Error("Student already exists");
-  }
-
-  const classData = await prisma.class.findUnique({
-    where: {
-      id: payload.classId,
-    },
-  });
-
-  if (!classData) {
-    throw new Error("Class not found");
-  }
-
-  if (existingStudent) {
-    throw new Error("Student already exists");
-  }
-
-  const board = await prisma.board.findUnique({
-    where: {
-      id: payload.boardId,
-    },
-  });
-
-  const session = await prisma.academicSession.findFirst({
-    where: {
-      status: "ACTIVE",
-    },
-  });
-
-  if (!board || !session) {
-    throw new Error("Board or Academic Session not found");
-  }
-
-  const year = session.name.slice(2, 4);
-
-  const boardCode = board.shortName;
-
-  const latestStudent = await prisma.student.findFirst({
-    where: {
-      boardId: payload.boardId,
-      academicSessionId: session.id,
-    },
-
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  let nextNumber = 1;
-
-  if (latestStudent) {
-    const lastNumber = parseInt(latestStudent.studentId.slice(-4));
-
-    nextNumber = lastNumber + 1;
-  }
-
-  const studentId = `${year}${boardCode}${String(nextNumber).padStart(4, "0")}`;
-
-  const hashedPassword = await bcrypt.hash(payload.password, 10);
-
-  const student = await prisma.student.create({
-    data: {
-      ...payload,
-
-      academicSessionId: session.id,
-
-      studentId,
-
-      password: hashedPassword,
-    },
-
-    include: {
-      board: true,
-      class: true,
-      academicSession: true,
-    },
-  });
-
-  await prisma.oTP.deleteMany({
-    where: {
-      email: payload.email,
-    },
-  });
-
-  if (student.email) {
-    try {
-      await sendEmail(
-        student.email,
-        "Welcome to NBCA",
-        welcomeStudentTemplate({
-          name: student.name,
-          studentId: student.studentId,
-          email: student.email,
-          board: board.name,
-          className: classData.name,
-        }),
-      );
-    } catch (error) {
-      console.error("Welcome email failed:", error);
+    if (!verifiedOTP) {
+      throw new Error("Email not verified");
     }
+    console.log("✅ OTP Verified");
+
+    console.log("Step 2: Checking existing student...");
+    const existingStudent = await prisma.student.findUnique({
+      where: {
+        email: payload.email,
+      },
+    });
+
+    if (existingStudent) {
+      throw new Error("Student already exists");
+    }
+    console.log("✅ Student does not exist");
+
+    console.log("Step 3: Finding class...");
+    const classData = await prisma.class.findUnique({
+      where: {
+        id: payload.classId,
+      },
+    });
+
+    if (!classData) {
+      throw new Error("Class not found");
+    }
+    console.log("✅ Class Found");
+
+    console.log("Step 4: Finding board...");
+    const board = await prisma.board.findUnique({
+      where: {
+        id: payload.boardId,
+      },
+    });
+
+    console.log("Step 5: Finding active academic session...");
+    const session = await prisma.academicSession.findFirst({
+      where: {
+        status: "ACTIVE",
+      },
+    });
+
+    if (!board) {
+      throw new Error("Board not found");
+    }
+
+    if (!session) {
+      throw new Error("Active Academic Session not found");
+    }
+
+    console.log("✅ Board & Session Found");
+
+    const year = session.name.slice(2, 4);
+    const boardCode = board.shortName;
+
+    console.log("Step 6: Finding latest student...");
+    const latestStudent = await prisma.student.findFirst({
+      where: {
+        boardId: payload.boardId,
+        academicSessionId: session.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    let nextNumber = 1;
+
+    if (latestStudent) {
+      const lastNumber = parseInt(latestStudent.studentId.slice(-4));
+      nextNumber = lastNumber + 1;
+    }
+
+    const studentId = `${year}${boardCode}${String(nextNumber).padStart(4, "0")}`;
+
+    console.log("Generated Student ID:", studentId);
+
+    console.log("Step 7: Hashing Password...");
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+    console.log("Step 8: Creating Student...");
+    const student = await prisma.student.create({
+      data: {
+        ...payload,
+        academicSessionId: session.id,
+        studentId,
+        password: hashedPassword,
+      },
+      include: {
+        board: true,
+        class: true,
+        academicSession: true,
+      },
+    });
+
+    console.log("✅ Student Created");
+
+    console.log("Step 9: Deleting OTP...");
+    await prisma.oTP.deleteMany({
+      where: {
+        email: payload.email,
+      },
+    });
+
+    console.log("Step 10: Sending Welcome Email...");
+    if (student.email) {
+      try {
+        await sendEmail(
+          student.email,
+          "Welcome to NBCA",
+          welcomeStudentTemplate({
+            name: student.name,
+            studentId: student.studentId,
+            email: student.email,
+            board: board.name,
+            className: classData.name,
+          })
+        );
+
+        console.log("✅ Welcome Email Sent");
+      } catch (err) {
+        console.error("❌ Welcome Email Failed");
+        console.error(err);
+      }
+    }
+
+    const { password, ...studentData } = student;
+
+    const token = jwt.sign(
+      {
+        id: student.id,
+        studentId: student.studentId,
+        role: student.role,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    console.log("🎉 STUDENT SIGNUP COMPLETED");
+
+    return {
+      message: "Student registered successfully",
+      token,
+      student: studentData,
+    };
+  } catch (error) {
+    console.error("❌ STUDENT SIGNUP ERROR");
+    console.error(error);
+    throw error;
   }
-  const { password, ...studentData } = student;
-
-  const token = jwt.sign(
-    {
-      id: student.id,
-      studentId: student.studentId,
-      role: student.role,
-    },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "7d",
-    },
-  );
-
-  return {
-    message: "Student registered successfully",
-    token,
-    student: studentData,
-  };
 };
 
 export const resetPassword = async (email: string, password: string) => {

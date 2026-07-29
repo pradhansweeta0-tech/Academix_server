@@ -20,8 +20,7 @@ export const otpEmailTemplate = (
       text-align:center;
     ">
     <div>
-      <h1>NBCA</h1>
-      <p>North Bengal Cloud Academy</p>
+      <h1>Academix</h1>
       </div>
     </div>
 
@@ -67,7 +66,7 @@ export const otpEmailTemplate = (
       font-size:12px;
       color:#6b7280;
     ">
-      © NBCA • North Bengal Cloud Academy
+      © Academix
       <br>
       <br>
       <strong>Contact: support@nbca.co.in</strong>

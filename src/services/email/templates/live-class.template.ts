@@ -28,7 +28,7 @@ export const liveClassTemplate = (
 
     <p>
       Best Regards,<br/>
-      NBCA Team
+      Academix Team
     </p>
   `;
 };

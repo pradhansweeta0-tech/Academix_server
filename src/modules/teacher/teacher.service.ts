@@ -52,7 +52,7 @@ export const createTeacher = async (payload: {
   try {
     await sendEmail(
       teacher.email,
-      "Welcome to NBCA",
+      "Welcome to Academix",
       welcomeTeacherTemplate({
         name: teacher.name,
         email: teacher.email,

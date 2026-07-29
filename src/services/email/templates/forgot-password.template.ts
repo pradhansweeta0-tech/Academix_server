@@ -18,8 +18,7 @@ export const forgotPasswordTemplate = (
       padding:24px;
       text-align:center;
     ">
-      <h1>NBCA</h1>
-      <p>North Bengal Cloud Academy</p>
+      <h1>Acdemix</h1>
     </div>
 
     <div style="padding:30px">
@@ -61,7 +60,7 @@ export const forgotPasswordTemplate = (
       font-size:12px;
       color:#6b7280;
     ">
-      © NBCA • North Bengal Cloud Academy
+      © Acdemix
       <br>
       <br>
       <strong>Contact: support@nbca.co.in</strong>

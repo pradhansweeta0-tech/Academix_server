@@ -24,13 +24,12 @@ export const welcomeStudentTemplate = (
       padding:24px;
       text-align:center;
     ">
-      <h1>NBCA</h1>
-      <p>North Bengal Cloud Academy</p>
+      <h1>Acdemix</h1>
     </div>
 
     <div style="padding:30px">
 
-      <h2>Welcome to NBCA 🎉</h2>
+      <h2>Welcome to Academix 🎉</h2>
 
       <p>Dear ${student.name},</p>
 
@@ -61,10 +60,10 @@ export const welcomeStudentTemplate = (
       </table>
 
       <p style="margin-top:25px">
-        You can now log in to your NBCA account and begin learning.
+        You can now log in to your Academix account and begin learning.
       </p>
-
-      <p>Login to https://nbca.co.in</p>
+      <p> To login use your Student ID</p>
+      <p>Login to https://academix-two-omega.vercel.app/login </p>
 
     </div>
 
@@ -75,7 +74,7 @@ export const welcomeStudentTemplate = (
       font-size:12px;
       color:#6b7280;
     ">
-      © NBCA • North Bengal Cloud Academy
+      © Academix 
       <br>
       <br>
       <strong>Contact: support@nbca.co.in</strong>

@@ -7,49 +7,34 @@ export const sendEmail = async (
     "https://api.brevo.com/v3/smtp/email",
     {
       method: "POST",
-
       headers: {
         accept: "application/json",
-
         "content-type": "application/json",
-
-        "api-key":
-          process.env.BREVO_API_KEY!,
+        "api-key": process.env.BREVO_API_KEY!,
       },
-
       body: JSON.stringify({
         sender: {
-          name: "NBCA",
-
-          email:
-            "info@nbca.co.in",
+          name: "Academix",
+          email: "academix@nbca.co.in",
         },
-
         to: [
           {
             email: to,
           },
         ],
-
         subject,
-
         htmlContent: html,
       }),
     }
   );
 
-  const data =
-    await response.json();
+  const data = await response.json();
 
-  console.log(
-    "BREVO RESPONSE:",
-    data
-  );
+  console.log("Status:", response.status);
+  console.log("Brevo Response:", JSON.stringify(data, null, 2));
 
   if (!response.ok) {
-    throw new Error(
-      JSON.stringify(data)
-    );
+    throw new Error(JSON.stringify(data));
   }
 
   return data;
