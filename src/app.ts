@@ -36,8 +36,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://nbca.co.in",
-      "https://www.nbca.co.in",
+     "https://academix-two-omega.vercel.app/",
       "*",
     ],
 
