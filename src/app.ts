@@ -36,18 +36,17 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-     "https://academix-two-omega.vercel.app/",
-      "*",
+      "https://academix-two-omega.vercel.app",
+      "https://www.academix-two-omega.vercel.app",
     ],
-
     credentials: true,
-  }),
+  })
 );
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("NBCA Backend Running 🚀");
+  res.send("Backend Running 🚀");
 });
 
 app.use("/api/auth", authRoutes);
