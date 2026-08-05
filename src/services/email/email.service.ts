@@ -15,7 +15,7 @@ export const sendEmail = async (
       body: JSON.stringify({
         sender: {
           name: "Academix",
-          email: "academix@nbca.co.in",
+          email: "pradhansweeta0@gmail.com",
         },
         to: [
           {
